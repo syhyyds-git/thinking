@@ -1,0 +1,362 @@
+<!-- index: TIR-Bench 技能实验成本分析 | 2026-06-04 | XSkill & Ace-Skill 冒烟测试 Token 消耗拆解与全量运行成本预估 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>TIR-Bench 技能实验 — 成本分析报告</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #1a1a2e; line-height: 1.6; }
+.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+h1 { font-size: 22px; margin-bottom: 4px; color: #1a1a2e; }
+.subtitle { color: #666; font-size: 13px; margin-bottom: 28px; }
+h2 { font-size: 16px; margin: 28px 0 12px; color: #2d3436; border-left: 3px solid #6c5ce7; padding-left: 10px; }
+h3 { font-size: 14px; margin: 16px 0 8px; color: #555; }
+
+/* Cards */
+.card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.metric-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.metric { flex: 1; min-width: 140px; text-align: center; padding: 12px 8px; background: #f8f9fb; border-radius: 8px; }
+.metric .value { font-size: 22px; font-weight: 700; color: #6c5ce7; }
+.metric .value.red { color: #e17055; }
+.metric .value.green { color: #00b894; }
+.metric .label { font-size: 11px; color: #999; margin-top: 4px; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+th { background: #6c5ce7; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
+td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+tr:hover td { background: #f8f9fb; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.badge-ok { background: #d4edda; color: #155724; }
+.badge-warn { background: #fff3cd; color: #856404; }
+.badge-fail { background: #f8d7da; color: #721c24; }
+
+/* Flow diagram */
+.flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+.flow-step { background: #6c5ce7; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap; }
+.flow-step.warn { background: #e17055; }
+.flow-arrow { color: #bbb; font-size: 16px; }
+.flow-note { font-size: 11px; color: #999; margin-top: 4px; }
+
+/* Cost bar chart */
+.bar-chart { margin: 12px 0; }
+.bar-row { display: flex; align-items: center; margin: 6px 0; }
+.bar-label { width: 180px; font-size: 12px; color: #555; text-align: right; padding-right: 10px; flex-shrink: 0; }
+.bar-track { flex: 1; height: 24px; background: #f0f0f0; border-radius: 4px; position: relative; }
+.bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; }
+.bar-fill.train { background: linear-gradient(90deg, #6c5ce7, #a29bfe); }
+.bar-fill.infer { background: linear-gradient(90deg, #00b894, #55efc4); }
+.bar-fill.exp { background: linear-gradient(90deg, #fdcb6e, #ffeaa7); }
+.bar-text { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3); white-space: nowrap; }
+.bar-text.outside { right: auto; left: calc(100% + 6px); color: #666; text-shadow: none; }
+
+/* Token breakdown */
+.token-bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin: 8px 0; }
+.token-seg { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; }
+.legend { display: flex; gap: 16px; margin: 6px 0; font-size: 11px; color: #666; }
+.legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+/* Footer */
+.footer { text-align: center; font-size: 11px; color: #aaa; margin-top: 32px; padding-top: 16px; border-top: 1px solid #eee; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>TIR-Bench 技能实验 — 成本分析报告</h1>
+<div class="subtitle">XSkill &amp; Ace-Skill 冒烟测试报告 &nbsp;|&nbsp; 模型：MiMo v2.5 &nbsp;|&nbsp; 2026-06-04</div>
+
+<!-- ====== 1. 冒烟测试总览 ====== -->
+<h2>1. 冒烟测试总览</h2>
+
+<div class="card">
+<div class="metric-row">
+<div class="metric"><div class="value">3</div><div class="label">冒烟运行次数</div></div>
+<div class="metric"><div class="value">12</div><div class="label">总样本数</div></div>
+<div class="metric"><div class="value red">1,998,589</div><div class="label">总 Token 消耗</div></div>
+<div class="metric"><div class="value">64%</div><div class="label">缓存命中率</div></div>
+</div>
+</div>
+
+<table>
+<tr><th>运行</th><th>基线</th><th>最大轮次</th><th>训练样本</th><th>推理样本</th><th>验证器已修复？</th><th>404 错误</th><th>预估 Token</th></tr>
+<tr>
+  <td>运行 1</td><td>XSkill</td><td class="num">20</td><td class="num">2</td><td class="num">2</td>
+  <td><span class="badge badge-fail">否</span></td><td class="num">0</td><td class="num">~785K</td>
+</tr>
+<tr>
+  <td>运行 2</td><td>XSkill</td><td class="num">8</td><td class="num">2</td><td class="num">2</td>
+  <td><span class="badge badge-ok">是</span></td><td class="num">0</td><td class="num">~550K</td>
+</tr>
+<tr>
+  <td>运行 3</td><td>Ace-Skill</td><td class="num">20</td><td class="num">2</td><td class="num">2</td>
+  <td><span class="badge badge-ok">是</span></td><td class="num">0</td><td class="num">~660K</td>
+</tr>
+</table>
+
+<!-- ====== 2. Token 消耗拆解 ====== -->
+<h2>2. Token 消耗拆解</h2>
+
+<div class="card">
+<h3>总体分布</h3>
+<div class="token-bar">
+  <div class="token-seg" style="width:53.4%;background:#6c5ce7;">输入（缓存命中）：1,067,008</div>
+  <div class="token-seg" style="width:29.9%;background:#a29bfe;">输入（缓存未命中）：596,752</div>
+  <div class="token-seg" style="width:16.7%;background:#00b894;">输出：334,829</div>
+</div>
+<div class="legend">
+  <span><span class="legend-dot" style="background:#6c5ce7;"></span>输入缓存命中 53.4%</span>
+  <span><span class="legend-dot" style="background:#a29bfe;"></span>输入缓存未命中 29.9%</span>
+  <span><span class="legend-dot" style="background:#00b894;"></span>输出 16.7%</span>
+</div>
+
+<h3 style="margin-top:20px;">单样本成本（冒烟测试平均）</h3>
+<div class="metric-row">
+  <div class="metric"><div class="value">~160K</div><div class="label">Token / 样本</div></div>
+  <div class="metric"><div class="value">~5:1</div><div class="label">输入 : 输出比</div></div>
+  <div class="metric"><div class="value">~14</div><div class="label">平均轮次 / 样本</div></div>
+  <div class="metric"><div class="value">~10K</div><div class="label">Token / 轮次</div></div>
+</div>
+</div>
+
+<!-- ====== 3. 成本增长原因 ====== -->
+<h2>3. 为什么 Token 消耗增长如此之快</h2>
+
+<div class="card">
+<h3>多轮对话的上下文累积</h3>
+<p style="font-size:13px;color:#555;margin-bottom:12px;">
+每一轮都会重新发送<b>完整对话历史</b>（包含之前所有的图片）。图片被编码为 Token，因此输入 Token 数随轮次线性增长。
+</p>
+
+<div class="flow">
+  <div class="flow-step">第1轮：系统提示 + 问题 + 1张图片 ≈ 15K</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">第2轮：历史 + 工具返回图片 ≈ 30K</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">第3轮：历史 + 工具返回图片 ≈ 45K</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">第N轮 ≈ N × 15K</div>
+</div>
+<div class="flow-note">14 轮对话 → 单次 rollout 累积输入 ≈ 1.5M Token</div>
+
+<h3 style="margin-top:16px;">训练阶段 = 每样本 4 次独立 Rollout</h3>
+<div class="flow">
+  <div class="flow-step">Rollout 1 (~1.5M)</div>
+  <div class="flow-arrow">+</div>
+  <div class="flow-step">Rollout 2 (~1.5M)</div>
+  <div class="flow-arrow">+</div>
+  <div class="flow-step">Rollout 3 (~1.5M)</div>
+  <div class="flow-arrow">+</div>
+  <div class="flow-step">Rollout 4 (~1.5M)</div>
+  <div class="flow-arrow">=</div>
+  <div class="flow-step warn">~6M / 样本</div>
+</div>
+
+<h3 style="margin-top:16px;">+ 经验生成阶段（训练后处理）</h3>
+<p style="font-size:13px;color:#555;">
+所有 Rollout 完成后，系统分析工具输出的图片（4 次 Rollout × ~15 张图片 = ~60 张），生成经验总结、批评和技能文档。此阶段额外增加约 ~450K Token / 样本。
+</p>
+</div>
+
+<!-- ====== 4. 全量运行成本预估 ====== -->
+<h2>4. 全量运行成本预估</h2>
+
+<div class="card">
+<table>
+<tr>
+  <th>方案</th><th>训练样本</th><th>训练 Rollout</th><th>推理样本</th>
+  <th>推理 Rollout</th><th>预估 Token</th><th>预估费用（MiMo）</th>
+</tr>
+<tr style="background:#fff8e1;">
+  <td><b>基准方案（4 Rollout）</b></td>
+  <td class="num">100</td><td class="num">4</td><td class="num">200</td><td class="num">1</td>
+  <td class="num"><b>~1.0B</b></td><td class="num"><b>~¥1,080-1,440</b></td>
+</tr>
+<tr>
+  <td>保守方案（2 Rollout）</td>
+  <td class="num">100</td><td class="num">2</td><td class="num">200</td><td class="num">1</td>
+  <td class="num">~550M</td><td class="num">~¥576-864</td>
+</tr>
+<tr>
+  <td>最小方案（1 Rollout）</td>
+  <td class="num">100</td><td class="num">1</td><td class="num">200</td><td class="num">1</td>
+  <td class="num">~300M</td><td class="num">~¥324-468</td>
+</tr>
+</table>
+<p style="font-size:11px;color:#999;margin-top:8px;">
+  * 单基线费用。两个基线（XSkill + Ace-Skill）需翻倍。MiMo 定价：输入 $0.14/M（未命中），输出 $0.28/M。汇率按 7.2 计算。
+</p>
+
+<h3 style="margin-top:20px;">各阶段成本占比（基准方案，单基线）</h3>
+<div class="bar-chart">
+  <div class="bar-row">
+    <div class="bar-label">训练推理</div>
+    <div class="bar-track">
+      <div class="bar-fill train" style="width:60%;">
+        <span class="bar-text">~600M (60%)</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-row">
+    <div class="bar-label">训练经验生成</div>
+    <div class="bar-track">
+      <div class="bar-fill exp" style="width:5%;">
+        <span class="bar-text outside">~45M (4.5%)</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-row">
+    <div class="bar-label">推理阶段</div>
+    <div class="bar-track">
+      <div class="bar-fill infer" style="width:30%;">
+        <span class="bar-text">~300M (30%)</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-row">
+    <div class="bar-label">验证器 + 其他</div>
+    <div class="bar-track">
+      <div class="bar-fill" style="width:5%;background:#ddd;">
+        <span class="bar-text outside" style="color:#888;">~55M (5.5%)</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ====== 5. 冒烟测试结果 ====== -->
+<h2>5. 冒烟测试结果（推理阶段）</h2>
+
+<div class="card">
+<table>
+<tr><th>基线</th><th>运行</th><th>doc_id</th><th>标准答案</th><th>模型回答</th><th>验证器评分</th><th>轮次</th><th>问题</th></tr>
+<tr>
+  <td>XSkill</td><td>v1（mt20）</td><td>refcoco_524</td><td>A</td><td>A</td>
+  <td><span class="badge badge-fail">失败</span></td><td class="num">~9</td><td>验证器端点 Bug</td>
+</tr>
+<tr>
+  <td>XSkill</td><td>v1（mt20）</td><td>refcoco_921</td><td>B</td><td>F</td>
+  <td><span class="badge badge-fail">失败</span></td><td class="num">~9</td><td>验证器端点 Bug</td>
+</tr>
+<tr>
+  <td>XSkill</td><td>v2（mt8）</td><td>refcoco_524</td><td>A</td><td style="color:#e17055;">轮次用尽</td>
+  <td><span class="badge badge-ok">评分：0</span></td><td class="num">8</td><td>未收敛</td>
+</tr>
+<tr>
+  <td>XSkill</td><td>v2（mt8）</td><td>refcoco_921</td><td>B</td><td style="color:#e17055;">轮次用尽</td>
+  <td><span class="badge badge-ok">评分：0</span></td><td class="num">8</td><td>未收敛</td>
+</tr>
+<tr>
+  <td>Ace-Skill</td><td>v3（mt20）</td><td>refcoco_524</td><td>A</td><td style="color:#e17055;">轮次用尽</td>
+  <td><span class="badge badge-ok">评分：0</span></td><td class="num">~20</td><td>未收敛</td>
+</tr>
+<tr>
+  <td>Ace-Skill</td><td>v3（mt20）</td><td>refcoco_921</td><td>B</td><td>F</td>
+  <td><span class="badge badge-ok">评分：0</span></td><td class="num">~7</td><td>答案错误</td>
+</tr>
+</table>
+<p style="font-size:12px;color:#888;margin-top:8px;">
+  "轮次用尽" = 模型将所有轮次用于 CV 分析，未产出最终 &lt;answer&gt; 标签。
+</p>
+</div>
+
+<!-- ====== 6. 流水线组件状态 ====== -->
+<h2>6. 流水线组件状态</h2>
+
+<div class="card">
+<table>
+<tr><th>组件</th><th>XSkill</th><th>Ace-Skill</th><th>备注</th></tr>
+<tr>
+  <td>多模态 API（image_url）</td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td>MiMo v2.5 支持 image_url + tools</td>
+</tr>
+<tr>
+  <td>工具调用（code_interpreter）</td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td>CV 分析正常，模型可生成代码</td>
+</tr>
+<tr>
+  <td>经验分解</td>
+  <td><span class="badge badge-warn">部分可用</span></td>
+  <td><span class="badge badge-warn">部分可用</span></td>
+  <td>无系统消息时返回空（MiMo 要求带系统消息）</td>
+</tr>
+<tr>
+  <td>经验生成</td>
+  <td><span class="badge badge-warn">部分可用</span></td>
+  <td><span class="badge badge-warn">部分可用</span></td>
+  <td>发送 &gt;15 张图片时报"多模态数据损坏"</td>
+</tr>
+<tr>
+  <td>技能生成</td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td>SKILL.md / SKILL_cluster_*.md 已生成</td>
+</tr>
+<tr>
+  <td>经验检索（推理阶段）</td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td>本地 BGE 向量嵌入 + 余弦相似度检索</td>
+</tr>
+<tr>
+  <td>本地 BGE 向量嵌入</td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td>BAAI/bge-base-en-v1.5，离线模式</td>
+</tr>
+<tr>
+  <td>验证器（LLM-as-Judge）</td>
+  <td><span class="badge badge-ok">正常（已修复）</span></td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td>已修复：端点双重路径 Bug + 系统消息必填</td>
+</tr>
+<tr>
+  <td>聚类系统（Ace-Skill）</td>
+  <td>N/A</td>
+  <td><span class="badge badge-ok">正常</span></td>
+  <td>5 个聚类，每个聚类独立维护经验和技能</td>
+</tr>
+</table>
+</div>
+
+<!-- ====== 7. 已知问题 ====== -->
+<h2>7. 已知问题与建议</h2>
+
+<div class="card">
+<table>
+<tr><th style="width:30px">#</th><th>问题</th><th>严重程度</th><th>建议</th></tr>
+<tr><td>1</td><td>模型过度使用 code_interpreter，不收敛到最终答案</td><td><span class="badge badge-fail">高</span></td>
+  <td>提示工程：添加"在 N 轮内给出最终答案"指令</td></tr>
+<tr><td>2</td><td>经验生成发送图片过多 → "多模态数据损坏"错误</td><td><span class="badge badge-warn">中</span></td>
+  <td>限制每批图片数 ≤10</td></tr>
+<tr><td>3</td><td>经验分解返回空（缺少系统消息）</td><td><span class="badge badge-warn">中</span></td>
+  <td>确保所有 MiMo API 调用包含系统消息</td></tr>
+<tr><td>4</td><td>SSL / 网络不稳定</td><td><span class="badge badge-warn">中</span></td>
+  <td>添加指数退避重试机制</td></tr>
+</table>
+</div>
+
+<!-- ====== 8. 下一步计划 ====== -->
+<h2>8. 下一步计划</h2>
+<div class="card" style="font-size:13px;color:#555;">
+<ol style="padding-left:20px;">
+  <li style="margin:6px 0;"><b>确定 rollouts_per_sample</b>：4（论文原始设置）vs 2（节省成本）。这是最大的成本杠杆。</li>
+  <li style="margin:6px 0;"><b>运行 XSkill 干净冒烟测试（mt=20）</b>：在所有修复生效后确认收敛。</li>
+  <li style="margin:6px 0;"><b>修复收敛问题</b>：模型花费过多轮次做 CV 分析。考虑提示调优或轮次预算。</li>
+  <li style="margin:6px 0;"><b>全量运行</b>：两个基线（100 训练 + 200 推理），确认收敛后执行。</li>
+</ol>
+</div>
+
+<div class="footer">
+  生成时间 2026-06-04 &nbsp;|&nbsp; 模型：MiMo v2.5 via api.xiaomimimo.com &nbsp;|&nbsp; 向量嵌入：BAAI/bge-base-en-v1.5（本地）
+</div>
+
+</div>
+</body>
+</html>
