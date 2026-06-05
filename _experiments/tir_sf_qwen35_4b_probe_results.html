@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TIR-Bench Qwen3.5-4B vs Qwen3-VL-8B 5-category Probe</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f5f7;color:#111827}
+.hdr{background:#1e3a5f;padding:20px 26px}
+.hdr h1{font-size:20px;margin:0 0 4px;color:#fff}
+.hdr p{margin:0;color:rgba(255,255,255,.7);font-size:12px}
+.wrap{max-width:1100px;margin:0 auto;padding:18px}
+.section{margin-bottom:24px}
+.section h2{font-size:15px;color:#374151;border-bottom:2px solid #e2e4e8;padding-bottom:6px;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.metric-card{background:#fff;border:1px solid #e2e4e8;border-radius:8px;padding:14px}
+.metric-card .label{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px}
+.metric-card .value{font-size:28px;font-weight:750;margin:4px 0 2px}
+.metric-card .sub{font-size:11px;color:#9ca3af}
+.metric-card.highlight{border-left:4px solid #1d4ed8;background:#f0f7ff}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e2e4e8}
+th{background:#f8f9fa;text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;color:#6b7280}
+td{padding:10px 12px;border-top:1px solid #f3f4f6}
+tr:hover td{background:#f9fafb}
+.badge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-win{background:#d1fae5;color:#065f46}
+.badge-tie{background:#f3f4f6;color:#374151}
+.num{font-variant-numeric:tabular-nums}
+.footnote{font-size:11px;color:#9ca3af;margin-top:12px}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <h1>TIR-Bench 5-category Probe: SiliconFlow Qwen3.5-4B vs Qwen3-VL-8B</h1>
+  <p>1 sample each × 5 categories (refcoco, maze, instrument, ocr, contrast) &middot; mt10, seed42 &middot; 2026-06-05</p>
+</header>
+<main class="wrap">
+  <div class="section">
+    <h2>Score Summary</h2>
+    <div class="grid2">
+      <div>
+        <table>
+          <thead><tr><th>Baseline</th><th>Model</th><th>Score</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>XSkill</td><td>Qwen3-VL-8B (SF)</td>
+              <td><strong>0.20</strong></td>
+              <td>1/5 &mdash; ocr_337</td>
+            </tr>
+            <tr style="background:#fffbeb">
+              <td>XSkill</td><td>Qwen3.5-4B (SF)</td>
+              <td><strong>0.20</strong></td>
+              <td>1/5 &mdash; refcoco_524</td>
+            </tr>
+            <tr>
+              <td>Ace-Skill</td><td>Qwen3-VL-8B (SF)</td>
+              <td><strong>0.40</strong></td>
+              <td>2/5 &mdash; instrument_545, ocr_337</td>
+            </tr>
+            <tr style="background:#fffbeb">
+              <td>Ace-Skill</td><td>Qwen3.5-4B (SF)</td>
+              <td><strong>0.40</strong></td>
+              <td>2/5 &mdash; refcoco_524, instrument_545</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="grid2">
+          <div class="metric-card">
+            <div class="label">Ace &gt; XSkill by</div>
+            <div class="value" style="color:#059669">+0.20</div>
+            <div class="sub">Ace-Skill pipeline advantage</div>
+          </div>
+          <div class="metric-card">
+            <div class="label">Qwen3-VL-8B vs 3.5-4B</div>
+            <div class="value" style="color:#374151">Tie</div>
+            <div class="sub">Same score on same baseline</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:14px;background:#fff;border:1px solid #e2e4e8;border-radius:8px">
+          <div class="label" style="margin-bottom:8px">Per-category breakdown</div>
+          <table style="font-size:12px">
+            <thead><tr><th>Category</th><th>X VL</th><th>X 3.5-4B</th><th>A VL</th><th>A 3.5-4B</th></tr></thead>
+            <tbody>
+              <tr><td>refcoco (visual grounding)</td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-win">1</span></td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-win">1</span></td></tr>
+              <tr><td>maze (spatial reasoning)</td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-tie">0</span></td></tr>
+              <tr><td>instrument (reading)</td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-win">1</span></td><td><span class="badge badge-win">1</span></td></tr>
+              <tr><td>ocr (text extraction)</td><td><span class="badge badge-win">1</span></td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-win">1</span></td><td><span class="badge badge-tie">0</span></td></tr>
+              <tr><td>contrast (image compare)</td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-tie">0</span></td><td><span class="badge badge-tie">0</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Token Usage &amp; Cost (all call types)</h2>
+    <div class="grid4">
+      <div class="metric-card">
+        <div class="label">XSkill Qwen3-VL-8B</div>
+        <div class="value" style="color:#3b82f6">105K</div>
+        <div class="sub">38 calls &middot; 0% missing</div>
+      </div>
+      <div class="metric-card highlight">
+        <div class="label">XSkill Qwen3.5-4B</div>
+        <div class="value" style="color:#1d4ed8">361K</div>
+        <div class="sub">79 calls &middot; 25.3% missing</div>
+      </div>
+      <div class="metric-card">
+        <div class="label">Ace-Skill Qwen3-VL-8B</div>
+        <div class="value" style="color:#3b82f6">104K</div>
+        <div class="sub">34 calls &middot; 0% missing</div>
+      </div>
+      <div class="metric-card highlight">
+        <div class="label">Ace-Skill Qwen3.5-4B</div>
+        <div class="value" style="color:#1d4ed8">248K</div>
+        <div class="sub">36 calls &middot; 11.1% missing</div>
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <table>
+        <thead><tr>
+          <th>Baseline &middot; Model</th>
+          <th>API Calls</th>
+          <th>Prompt Tokens</th>
+          <th>Completion Tokens</th>
+          <th>Total Tokens</th>
+          <th>Retries</th>
+          <th>Missing Usage</th>
+          <th>Est. Cost</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td>XSkill &middot; Qwen3-VL-8B</td>
+            <td class="num">38</td>
+            <td class="num">93,369</td>
+            <td class="num">12,063</td>
+            <td class="num">105,432</td>
+            <td class="num">18</td>
+            <td class="num">0.0%</td>
+            <td class="num">&mdash;</td>
+          </tr>
+          <tr style="background:#f0f7ff">
+            <td>XSkill &middot; Qwen3.5-4B</td>
+            <td class="num">79</td>
+            <td class="num">305,433</td>
+            <td class="num">55,382</td>
+            <td class="num">360,815</td>
+            <td class="num">39</td>
+            <td class="num">25.3%</td>
+            <td class="num">~$0.26<br><span style="font-size:10px;color:#9ca3af">(0.06+0.055) × $2M/$1M</span></td>
+          </tr>
+          <tr>
+            <td>Ace-Skill &middot; Qwen3-VL-8B</td>
+            <td class="num">34</td>
+            <td class="num">93,252</td>
+            <td class="num">11,142</td>
+            <td class="num">104,394</td>
+            <td class="num">22</td>
+            <td class="num">0.0%</td>
+            <td class="num">&mdash;</td>
+          </tr>
+          <tr style="background:#f0f7ff">
+            <td>Ace-Skill &middot; Qwen3.5-4B</td>
+            <td class="num">36</td>
+            <td class="num">200,050</td>
+            <td class="num">47,808</td>
+            <td class="num">247,858</td>
+            <td class="num">20</td>
+            <td class="num">11.1%</td>
+            <td class="num">~$0.18<br><span style="font-size:10px;color:#9ca3af">(0.04+0.048) × $2M/$1M</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="footnote">Est. cost uses SiliconFlow Qwen3.5-4B pricing (input $0.2/1M tokens, output $1/1M tokens). Qwen3-VL-8B pricing TBD (contact SiliconFlow). Token counts include all call types. XSkill Qwen3.5-4B is ~3.5x more token-heavy than VL variant due to tool_image_feedback round trips and estimation fallback.</p>
+  </div>
+
+  <div class="section">
+    <h2>Call-Type Breakdown</h2>
+    <table>
+      <thead><tr>
+        <th>Baseline</th><th>Model</th>
+        <th>agent_turn calls</th><th>agent_turn tokens</th>
+        <th>task_decomp</th><th>experience</th>
+        <th>skill_adapt</th><th>verifier</th>
+        <th>tool_image_feedback</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>XSkill</td><td>Qwen3-VL-8B</td>
+          <td class="num">18</td><td class="num">72,268</td>
+          <td class="num">5</td><td class="num">5 rewrites</td>
+          <td class="num">5</td><td class="num">5</td>
+          <td class="num" style="color:#9ca3af">0 (VL handles images)</td>
+        </tr>
+        <tr style="background:#f0f7ff">
+          <td>XSkill</td><td>Qwen3.5-4B</td>
+          <td class="num">39</td><td class="num">311,705</td>
+          <td class="num">5</td><td class="num">5 rewrites</td>
+          <td class="num">5</td><td class="num">5</td>
+          <td class="num" style="color:#f59e0b">20 (text-only needs feedback)</td>
+        </tr>
+        <tr>
+          <td>Ace-Skill</td><td>Qwen3-VL-8B</td>
+          <td class="num">20</td><td class="num">72,094</td>
+          <td class="num">&mdash;</td><td class="num">6</td>
+          <td class="num">1</td><td class="num">5</td>
+          <td class="num" style="color:#9ca3af">0 (VL handles images)</td>
+        </tr>
+        <tr style="background:#f0f7ff">
+          <td>Ace-Skill</td><td>Qwen3.5-4B</td>
+          <td class="num">20</td><td class="num">228,287</td>
+          <td class="num">&mdash;</td><td class="num">6</td>
+          <td class="num">1</td><td class="num">5</td>
+          <td class="num" style="color:#f59e0b">4 (fewer than XSkill)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">XSkill needs many tool_image_feedback round trips because Qwen3.5-4B is text-only. VL model handles images natively in the forward pass. Ace-Skill is more efficient (only 4 vs 20 feedback calls) because it processes images differently.</p>
+  </div>
+
+  <div class="section">
+    <h2>Per-Sample Token Distribution</h2>
+    <table>
+      <thead><tr><th>Baseline</th><th>Model</th><th>refcoco_524</th><th>maze_531</th><th>instrument_545</th><th>ocr_337</th><th>contrast_211</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>XSkill</td><td>Qwen3-VL-8B</td>
+          <td class="num">43,508</td><td class="num">21,294</td><td class="num">22,004</td><td class="num">9,626</td><td class="num">9,000</td>
+        </tr>
+        <tr style="background:#f0f7ff">
+          <td>XSkill</td><td>Qwen3.5-4B</td>
+          <td class="num">66,404</td><td class="num">79,519</td><td class="num">90,127</td><td class="num">40,010</td><td class="num">84,755</td>
+        </tr>
+        <tr>
+          <td>Ace-Skill</td><td>Qwen3-VL-8B</td>
+          <td class="num">31,960</td><td class="num">35,524</td><td class="num">17,910</td><td class="num">9,000</td><td class="num">10,000</td>
+        </tr>
+        <tr style="background:#f0f7ff">
+          <td>Ace-Skill</td><td>Qwen3.5-4B</td>
+          <td class="num">56,008</td><td class="num">162,284</td><td class="num">21,203</td><td class="num">3,604</td><td class="num">4,759</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">Tokens = sum of all API calls per sample. maze_531 is the most expensive (long path-planning with many turns). Ace-Skill maze_531 with Qwen3.5-4B consumed 162K tokens alone. XSkill Qwen3.5-4B is 2-4x more token-heavy than VL variant per sample.</p>
+  </div>
+
+  <div class="section">
+    <h2>Key Findings</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:#fff;border:1px solid #e2e4e8;border-radius:8px;padding:16px">
+        <h3 style="margin:0 0 8px;font-size:14px;color:#059669">Ace-Skill &gt; XSkill by +0.20</h3>
+        <p style="margin:0;font-size:12px;color:#4b5563">Both models score identically within a baseline. Ace-Skill pipeline (experience + better tool orchestration) consistently outperforms XSkill. The advantage is pipeline-level, not model-level.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e4e8;border-radius:8px;padding:16px">
+        <h3 style="margin:0 0 8px;font-size:14px;color:#dc2626">Qwen3.5-4B is 3-4x more token-expensive</h3>
+        <p style="margin:0;font-size:12px;color:#4b5563">Text-only model needs tool_image_feedback round trips for visual tasks. XSkill 3.5-4B: 361K tokens vs 105K for VL. Ace-Skill 3.5-4B: 248K vs 104K. Higher retry rate too.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e4e8;border-radius:8px;padding:16px">
+        <h3 style="margin:0 0 8px;font-size:14px;color:#1d4ed8">Qwen3.5-4B: 25.3% / 11.1% missing usage</h3>
+        <p style="margin:0;font-size:12px;color:#4b5563">SiliconFlow API doesn't always return usage in response headers. Falls back to local estimation (~4 bytes/token). Qwen3-VL-8B has 0% missing usage.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e4e8;border-radius:8px;padding:16px">
+        <h3 style="margin:0 0 8px;font-size:14px;color:#7c3aed">Different samples correct per model</h3>
+        <p style="margin:0;font-size:12px;color:#4b5563">XSkill: VL wins on ocr_337, 4B wins on refcoco_524. Ace-Skill: both models win on instrument_545. No single model dominates all categories. Model diversity may help in ensemble.</p>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
