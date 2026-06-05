@@ -1,0 +1,352 @@
+<!-- index: TIR-Bench train+test mt10 rollout1 cost report | 2026-06-05 | Cost estimate for MiMo-v2.5 and Qwen3-VL-8B on XSkill and Ace-Skill -->
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TIR-Bench Train+Test 成本估算</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5f6b78;
+      --line: #d8e0e8;
+      --band: #f5f7fa;
+      --head: #263746;
+      --accent: #0b6bcb;
+      --ok: #147a4a;
+      --warn: #9a5b00;
+      --bad: #b42318;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.55;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 50px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 29px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 30px 0 10px;
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 8px 0; color: var(--muted); }
+    code {
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: #eef3f8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+    }
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .stamp {
+      min-width: 260px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 13px;
+      color: var(--muted);
+      background: var(--band);
+      font-size: 13px;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0 22px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--band);
+      min-height: 104px;
+    }
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .metric strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 25px;
+      line-height: 1.1;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 18px;
+      table-layout: fixed;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      vertical-align: top;
+      font-size: 14px;
+      word-break: break-word;
+    }
+    th {
+      background: var(--head);
+      color: #fff;
+      text-align: left;
+      font-weight: 650;
+    }
+    td.num, th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .note {
+      margin: 14px 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--accent);
+      background: #f0f6fd;
+      color: #334155;
+    }
+    .warnbox {
+      margin: 14px 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--warn);
+      background: #fff8e8;
+      color: #4b5563;
+    }
+    .ok { color: var(--ok); font-weight: 700; }
+    .warn { color: var(--warn); font-weight: 700; }
+    .bad { color: var(--bad); font-weight: 700; }
+    .small { font-size: 12px; color: var(--muted); }
+    @media (max-width: 860px) {
+      main { padding: 20px 14px 38px; }
+      .topline { display: block; }
+      .stamp { margin-top: 12px; }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      table { table-layout: auto; }
+      th, td { font-size: 13px; }
+    }
+    @media (max-width: 560px) {
+      .summary { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="topline">
+    <div>
+      <h1>TIR-Bench Train+Test 成本估算</h1>
+      <p>统一口径：<code>train 100 + test 200</code>，<code>rollout=1</code>，<code>max_turns=10</code>，同时跑 <code>XSkill</code> 和 <code>Ace-Skill</code>。</p>
+    </div>
+    <div class="stamp">
+      <div><b>日期</b>：2026-06-05</div>
+      <div><b>Benchmark</b>：TIR-Bench XSkill protocol split</div>
+      <div><b>范围</b>：复现前的低成本实验预算</div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="metric"><span>实验规模</span><strong>300 samples</strong><span>100 train + 200 test</span></div>
+    <div class="metric"><span>交互设置</span><strong>1 x 10</strong><span>每题 1 rollout，最多 10 turns</span></div>
+    <div class="metric"><span>Qwen3-VL-8B 总预算</span><strong>约 ¥10</strong><span>建议预留 ¥12-15，风险上限 ¥15-20</span></div>
+    <div class="metric"><span>MiMo-v2.5 总预算</span><strong>约 ¥84</strong><span>按输入不命中缓存</span></div>
+  </div>
+
+  <div class="note">
+    给外部汇报时可以直接说：在当前便宜版设置下，TIR-Bench 跑完两个 baseline，Qwen3-VL-8B 预计约 ¥10，建议预留 ¥12-15；如果全量 train 的经验/技能合并明显变长，风险上限按 ¥15-20 看。MiMo-v2.5 保守预计约 ¥84；这不是论文正式 <code>Pass@4 / Avg@4</code> 设置。
+  </div>
+
+  <h2>1. 主结论</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>模型</th>
+        <th class="num">XSkill</th>
+        <th class="num">Ace-Skill</th>
+        <th class="num">两个 baseline 合计</th>
+        <th>说明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Qwen3-VL-8B-Instruct / SiliconFlow</td>
+        <td class="num">约 ¥5.36</td>
+        <td class="num">约 ¥4.47</td>
+        <td class="num"><b>约 ¥9.83</b></td>
+        <td>按修复后 5 类 probe 加权外推；建议预算按 ¥12-15 留余量，风险上限按 ¥15-20 看。</td>
+      </tr>
+      <tr>
+        <td>MiMo-v2.5 / 官方价，输入未命中缓存</td>
+        <td class="num">约 ¥55</td>
+        <td class="num">约 ¥28</td>
+        <td class="num"><b>约 ¥84</b></td>
+        <td>按此前 mt10 smoke token logs 外推；这是保守口径。</td>
+      </tr>
+      <tr>
+        <td>MiMo-v2.5 / 输入命中缓存较多</td>
+        <td class="num">约 ¥20</td>
+        <td class="num">约 ¥10</td>
+        <td class="num"><b>约 ¥29</b></td>
+        <td>缓存命中率真实值未知，只作为乐观参考。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. 计费单价</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>模型 / 平台</th>
+        <th class="num">输入 token</th>
+        <th class="num">输出 token</th>
+        <th>备注</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Qwen3-VL-8B-Instruct / SiliconFlow</td>
+        <td class="num">¥0.500 / M</td>
+        <td class="num">¥2.000 / M</td>
+        <td>按用户提供的官网价格。</td>
+      </tr>
+      <tr>
+        <td>MiMo-v2.5 / 小米官方，未命中缓存</td>
+        <td class="num">¥1.000 / M</td>
+        <td class="num">¥2.000 / M</td>
+        <td>保守预算使用这个输入价。</td>
+      </tr>
+      <tr>
+        <td>MiMo-v2.5 / 小米官方，命中缓存</td>
+        <td class="num">¥0.020 / M</td>
+        <td class="num">¥2.000 / M</td>
+        <td>多轮视觉 agent 的命中率未知。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Qwen3-VL-8B 估算拆分</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Baseline</th>
+        <th class="num">Train 100</th>
+        <th class="num">Test 200</th>
+        <th class="num">合计</th>
+        <th>估算方法</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>XSkill</td>
+        <td class="num">约 ¥2.21</td>
+        <td class="num">约 ¥3.15</td>
+        <td class="num"><b>约 ¥5.36</b></td>
+        <td>test 用修复后 5 类 probe 按 test 类别分布加权；train 用修复后 agent/verifier 加权 + 旧 smoke 的经验/技能生成开销。</td>
+      </tr>
+      <tr>
+        <td>Ace-Skill</td>
+        <td class="num">约 ¥2.06</td>
+        <td class="num">约 ¥2.41</td>
+        <td class="num"><b>约 ¥4.47</b></td>
+        <td>同上。Ace 的 cluster 经验库在小 probe 中不完整，真实全量训练后 token 可能略有变化。</td>
+      </tr>
+      <tr>
+        <td>合计</td>
+        <td class="num">约 ¥4.27</td>
+        <td class="num">约 ¥5.56</td>
+        <td class="num"><b>约 ¥9.83</b></td>
+        <td>建议实际申请预算按 <b>¥12-15</b>，覆盖重试、网络错误、长样本和训练摘要变长；极端情况下按 <b>¥15-20</b> 做风险上限。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Qwen 修复后 5 类 probe 实测</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Baseline</th>
+        <th class="num">样本数</th>
+        <th class="num">Accuracy</th>
+        <th class="num">平均 turns</th>
+        <th class="num">Tokens</th>
+        <th class="num">实际费用</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>XSkill</td>
+        <td class="num">5</td>
+        <td class="num">1 / 5</td>
+        <td class="num">3.60</td>
+        <td class="num">105,432</td>
+        <td class="num">¥0.07081</td>
+      </tr>
+      <tr>
+        <td>Ace-Skill</td>
+        <td class="num">5</td>
+        <td class="num">2 / 5</td>
+        <td class="num">4.40</td>
+        <td class="num">104,394</td>
+        <td class="num">¥0.06891</td>
+      </tr>
+      <tr>
+        <td>合计</td>
+        <td class="num">10</td>
+        <td class="num">-</td>
+        <td class="num">约 4.00</td>
+        <td class="num">209,826</td>
+        <td class="num"><b>¥0.13972</b></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warnbox">
+    Qwen3-VL-8B 的费用便宜，但模型质量目前不稳定。修复后它能多轮调用工具，但仍会反复生成错误路径，例如 <code>Image.open('image.png')</code>，导致部分样本跑满 10 turns 仍无答案。
+  </div>
+
+  <h2>5. 与正式论文设置的区别</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>项目</th>
+        <th>当前预算设置</th>
+        <th>论文复现设置</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>rollout</td>
+        <td><code>1</code></td>
+        <td><code>4</code>，对应 Avg@4 / Pass@4</td>
+      </tr>
+      <tr>
+        <td>max_turns</td>
+        <td><code>10</code></td>
+        <td>原设置通常更高或依 benchmark/baseline 而定</td>
+      </tr>
+      <tr>
+        <td>用途</td>
+        <td>低成本跑通、模型筛选、方法开发</td>
+        <td>正式可比复现分数</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="small">相关日志：<code>logs/token_usage/*qwen3vl8b*5cat_probe_v2.jsonl</code>，<code>reports/token_usage_summary_*qwen3vl8b*5cat_probe_v2.*</code>。</p>
+</main>
+</body>
+</html>
