@@ -1,0 +1,858 @@
+<!-- index: TIR-Bench 原论文训练预算与低成本方案 | 2026-06-06 | XSkill 和 Ace-Skill 训练 rollout 规模、削减风险与推荐预算说明 -->
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="说明 XSkill 与 Ace-Skill 在 TIR-Bench 上的原论文训练量，以及 100、200、400 rollout 预算的差异与建议。">
+  <title>TIR-Bench 原论文训练预算与低成本方案</title>
+  <style>
+    :root {
+      --ink: #17202b;
+      --muted: #5d6876;
+      --line: #d9dee5;
+      --soft: #f4f6f8;
+      --paper: #ffffff;
+      --navy: #18324b;
+      --blue: #2d6f9f;
+      --cyan: #238b8d;
+      --green: #287a58;
+      --amber: #a86414;
+      --red: #a83a3a;
+      --shadow: 0 8px 24px rgba(22, 39, 56, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #edf1f4;
+      font-family: Inter, "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--blue);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(24, 50, 75, 0.97);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: min(1180px, calc(100% - 32px));
+      min-height: 54px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+
+    .brand {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    nav a {
+      color: #d8e6ef;
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    header {
+      color: #fff;
+      background: var(--navy);
+    }
+
+    .hero {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 42px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #9cc7dd;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 880px;
+      margin: 0;
+      font-size: clamp(30px, 5vw, 50px);
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 900px;
+      margin: 18px 0 0;
+      color: #d8e6ef;
+      font-size: 18px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      margin-top: 24px;
+      color: #abc3d1;
+      font-size: 13px;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+
+    section {
+      scroll-margin-top: 72px;
+      margin-top: 34px;
+    }
+
+    section:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      line-height: 1.4;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    .callout {
+      padding: 22px 24px;
+      border: 1px solid #a9c9bd;
+      border-left: 5px solid var(--green);
+      border-radius: 6px;
+      background: #f3faf7;
+      box-shadow: var(--shadow);
+    }
+
+    .callout strong {
+      color: #185b3e;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      min-height: 126px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .metric-value {
+      margin-top: 5px;
+      color: var(--navy);
+      font-size: 31px;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .metric-note {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .panel {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .formula {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .formula span {
+      padding: 7px 10px;
+      border: 1px solid #c7d4de;
+      border-radius: 4px;
+      background: #eef4f7;
+    }
+
+    .formula b {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: stretch;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 78px;
+      padding: 10px;
+      border: 1px solid #cad4dc;
+      border-radius: 5px;
+      background: var(--soft);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .arrow {
+      align-self: center;
+      color: var(--blue);
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .note {
+      padding: 12px 14px;
+      border-radius: 4px;
+      background: #fff6e8;
+      color: #67400f;
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #364451;
+      background: var(--soft);
+      font-size: 13px;
+    }
+
+    td {
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 3px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.red {
+      background: var(--red);
+    }
+
+    .tag.amber {
+      background: var(--amber);
+    }
+
+    .tag.green {
+      background: var(--green);
+    }
+
+    .budget-bars {
+      display: grid;
+      gap: 15px;
+      margin-top: 18px;
+    }
+
+    .budget-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) 78px;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .budget-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .bar-track {
+      height: 20px;
+      overflow: hidden;
+      border-radius: 3px;
+      background: #e5e9ed;
+    }
+
+    .bar {
+      height: 100%;
+      min-width: 3px;
+      border-radius: 3px;
+    }
+
+    .bar.low {
+      width: 25%;
+      background: var(--amber);
+    }
+
+    .bar.recommended {
+      width: 50%;
+      background: var(--green);
+    }
+
+    .bar.paper {
+      width: 100%;
+      background: var(--blue);
+    }
+
+    .budget-percent {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .risk {
+      padding: 18px;
+      border-top: 4px solid var(--amber);
+      border-radius: 4px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .risk p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 16px;
+    }
+
+    .decision-main {
+      padding: 24px;
+      border-radius: 6px;
+      color: #fff;
+      background: var(--navy);
+      box-shadow: var(--shadow);
+    }
+
+    .decision-main h2 {
+      color: #fff;
+    }
+
+    .decision-main p {
+      color: #d9e6ee;
+    }
+
+    .decision-main strong {
+      color: #fff;
+    }
+
+    .decision-side {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+    }
+
+    .quote {
+      margin: 0;
+      padding: 20px;
+      border-left: 5px solid var(--cyan);
+      border-radius: 4px;
+      background: #edf8f8;
+      color: #24454b;
+      font-size: 15px;
+    }
+
+    .sources {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .sources ol {
+      margin: 8px 0 0;
+      padding-left: 22px;
+    }
+
+    .sources li {
+      margin: 7px 0;
+    }
+
+    footer {
+      padding: 22px 16px 32px;
+      color: #77818c;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .metric-grid,
+      .risk-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .two-col,
+      .decision {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner {
+        display: block;
+        padding: 10px 0;
+      }
+
+      nav {
+        margin-top: 7px;
+      }
+
+      .hero {
+        padding: 34px 0 32px;
+      }
+
+      .lead {
+        font-size: 16px;
+      }
+
+      .metric-grid,
+      .risk-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+        justify-self: center;
+      }
+
+      .budget-row {
+        grid-template-columns: 112px minmax(0, 1fr) 58px;
+        gap: 9px;
+      }
+
+      .panel,
+      .callout {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">TIR-Bench 实验说明</div>
+      <nav aria-label="页面导航">
+        <a href="#conclusion">结论</a>
+        <a href="#paper">论文训练量</a>
+        <a href="#budget">预算对比</a>
+        <a href="#risk">削减风险</a>
+        <a href="#recommendation">实验建议</a>
+        <a href="#sources">来源</a>
+      </nav>
+    </div>
+  </div>
+
+  <header>
+    <div class="hero">
+      <p class="eyebrow">Experiment Budget Brief</p>
+      <h1>TIR-Bench 原论文训练预算与低成本方案</h1>
+      <p class="lead">
+        XSkill 与 Ace-Skill 的论文训练规模都是每种方法约 400 次训练 rollout。
+        将预算压到 100 次只能视为低成本 pilot；推荐至少保留 200 次，以便方法机制有机会产生可观测效果。
+      </p>
+      <div class="hero-meta">
+        <span>基准：TIR-Bench，5 类</span>
+        <span>训练集：100</span>
+        <span>测试集：200</span>
+        <span>协议：seed 42</span>
+        <span>更新：2026-06-06</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="conclusion">
+      <div class="callout">
+        <h2>先说结论</h2>
+        <p>
+          <strong>不建议直接把训练降到 100 次后，用结果判断 XSkill 或 Ace-Skill 是否有效。</strong>
+          100 次只相当于论文训练计算量的 25%，而且会削弱两种方法各自依赖的训练机制。
+          当前建议是：每种方法训练 200 次，先在相同的 50 个测试样本上各跑 1 次；
+          只有趋势明确后，再扩展到完整 200 个测试样本。
+        </p>
+        <p>
+          本页所说的 100 / 200 / 400 均指<strong>主 agent 的训练 rollout 数</strong>，
+          不等于训练阶段的全部 API 请求。轨迹摘要、经验批判、经验合并和技能生成仍会带来额外调用与 token 消耗。
+        </p>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="metric-label">XSkill 论文训练量</div>
+          <div class="metric-value">400</div>
+          <div class="metric-note">100 个训练题 × 每题 4 次独立 rollout</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Ace-Skill 论文训练量</div>
+          <div class="metric-value">400</div>
+          <div class="metric-note">50 steps × batch size 8 × 每样本 1 rollout</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">最低 pilot</div>
+          <div class="metric-value">100</div>
+          <div class="metric-note">论文训练量的 25%，只用于检查可运行性和初步趋势</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">推荐折中</div>
+          <div class="metric-value">200</div>
+          <div class="metric-note">论文训练量的 50%，成本和有效性风险更平衡</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="paper">
+      <h2>原论文实际训练了多少</h2>
+      <div class="two-col">
+        <article class="panel">
+          <h3>XSkill：每道训练题做 4 次独立 rollout</h3>
+          <p>
+            XSkill 在 TIR-Bench 使用 100 个训练样本。论文通用推理配置中
+            <strong>Rollouts per Sample = 4</strong>，因此训练阶段的主推理量为：
+          </p>
+          <div class="formula" aria-label="XSkill 训练量计算">
+            <span>100 题</span><b>×</b><span>4 rollouts</span><b>=</b><span>400</span>
+          </div>
+          <div class="flow" aria-label="XSkill 训练机制">
+            <div class="flow-step">同一任务<br>多次独立轨迹</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">轨迹总结<br>成功失败对比</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">形成 experience<br>并生成 skill</div>
+          </div>
+          <p class="note">
+            若改成每题只跑 1 次，XSkill 仍能执行，但“跨 rollout 对比”的信息会明显减少。
+          </p>
+        </article>
+
+        <article class="panel">
+          <h3>Ace-Skill：400 次优先采样，而非顺序遍历 400 个不同样本</h3>
+          <p>
+            Ace-Skill 论文明确写明：训练 50 steps，batch size 为 8，
+            每个被采样样本执行 1 次 rollout：
+          </p>
+          <div class="formula" aria-label="Ace-Skill 训练量计算">
+            <span>50 steps</span><b>×</b><span>8 samples</span><b>×</b><span>1 rollout</span><b>=</b><span>400</span>
+          </div>
+          <div class="flow" aria-label="Ace-Skill 训练机制">
+            <div class="flow-step">按优先级<br>选择一个 batch</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">执行并获取<br>成功或失败信号</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">更新采样概率<br>继续偏向难题</div>
+          </div>
+          <p class="note">
+            同一样本可能跨 batch 再次被选中。因此“100 次采样”不等于覆盖 100 个不同训练样本。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="budget">
+      <h2>100、200、400 三档训练预算</h2>
+      <div class="panel">
+        <div class="budget-bars" aria-label="训练预算比例">
+          <div class="budget-row">
+            <div class="budget-name">最低 pilot：100</div>
+            <div class="bar-track"><div class="bar low"></div></div>
+            <div class="budget-percent">25%</div>
+          </div>
+          <div class="budget-row">
+            <div class="budget-name">推荐折中：200</div>
+            <div class="bar-track"><div class="bar recommended"></div></div>
+            <div class="budget-percent">50%</div>
+          </div>
+          <div class="budget-row">
+            <div class="budget-name">论文规模：400</div>
+            <div class="bar-track"><div class="bar paper"></div></div>
+            <div class="budget-percent">100%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top: 16px;">
+        <table>
+          <thead>
+            <tr>
+              <th>档位</th>
+              <th>XSkill 训练方式</th>
+              <th>Ace-Skill 训练方式</th>
+              <th>能说明什么</th>
+              <th>判断</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>100</strong></td>
+              <td>100 题 × 1 rollout</td>
+              <td>100 次 prioritized selections</td>
+              <td>管线是否稳定、技能是否能生成、是否有初步方向</td>
+              <td><span class="tag red">不能称为复现</span></td>
+            </tr>
+            <tr>
+              <td><strong>200</strong></td>
+              <td>100 题 × 2 rollouts</td>
+              <td>200 次 prioritized selections</td>
+              <td>保留部分跨轨迹信息与优先采样迭代，可用于低预算方法比较</td>
+              <td><span class="tag green">当前推荐</span></td>
+            </tr>
+            <tr>
+              <td><strong>400</strong></td>
+              <td>100 题 × 4 rollouts</td>
+              <td>50 steps × batch 8</td>
+              <td>对齐论文训练计算量，最适合正式复现</td>
+              <td><span class="tag amber">论文规模</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="risk">
+      <h2>为什么训练不能砍得太多</h2>
+      <div class="risk-grid">
+        <article class="risk">
+          <h3>XSkill 会失去对比信号</h3>
+          <p>
+            论文设置让同一个任务产生多条独立轨迹，再从成功、失败和工具使用差异中提炼经验。
+            只有 1 条轨迹时，这一过程会退化为单轨迹总结。
+          </p>
+        </article>
+        <article class="risk">
+          <h3>Ace-Skill 的 sampler 尚未充分迭代</h3>
+          <p>
+            优先采样需要根据前面批次的结果不断更新分布。采样次数过少时，
+            sampler 可能刚识别出难题，训练预算就已经耗尽。
+          </p>
+        </article>
+        <article class="risk">
+          <h3>弱模型更需要足够训练信号</h3>
+          <p>
+            当前 Qwen3.5-4B 在 TIR-Bench 上本身能力有限。若训练也大幅压缩，
+            “没有提升”可能来自预算不足，而不一定来自方法无效。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>训练和测试应怎样安排</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>阶段</th>
+              <th>Vanilla Tools</th>
+              <th>XSkill</th>
+              <th>Ace-Skill</th>
+              <th>总 rollout</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>最低成本 pilot</strong></td>
+              <td>50 test × 1</td>
+              <td>100 train + 50 test</td>
+              <td>100 train + 50 test</td>
+              <td>350</td>
+            </tr>
+            <tr>
+              <td><strong>推荐 Stage 1</strong></td>
+              <td>50 test × 1</td>
+              <td>200 train + 50 test</td>
+              <td>200 train + 50 test</td>
+              <td>550</td>
+            </tr>
+            <tr>
+              <td><strong>推荐完整测试</strong></td>
+              <td>200 test × 1</td>
+              <td>200 train + 200 test</td>
+              <td>200 train + 200 test</td>
+              <td>1000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top: 14px;">
+        三种方法必须使用同一批测试样本、同一模型、同一 max_turns、同一工具配置。
+        Vanilla Tools 不训练，只运行测试集，作为判断 skill/memory 是否真正带来提升的必要对照。
+      </p>
+    </section>
+
+    <section id="recommendation">
+      <div class="decision">
+        <div class="decision-main">
+          <h2>当前实验建议</h2>
+          <p>
+            <strong>第一步按每种方法 200 次训练 rollout 执行。</strong>
+            XSkill 使用 100 题 × 2 rollouts；Ace-Skill 保留 prioritized sampler，
+            执行 200 次采样，不改成顺序遍历。
+          </p>
+          <p>
+            测试先使用固定的分层 50 题，每种方法 rollout=1、max_turns=10。
+            若 XSkill 或 Ace-Skill 相对 Vanilla Tools 出现稳定提升，再扩展到完整 200 题测试。
+          </p>
+        </div>
+        <aside class="decision-side">
+          <h3>结果解释边界</h3>
+          <p><strong>100 次训练：</strong>只能称为低成本 pilot。</p>
+          <p><strong>200 次训练：</strong>可称为 50% 论文训练预算下的方法比较。</p>
+          <p><strong>400 次训练：</strong>训练规模与论文一致，但模型、API 和 max_turns 等仍需单独对齐，才能称为严格复现。</p>
+        </aside>
+      </div>
+    </section>
+
+    <section>
+      <h2>可直接对外使用的说明</h2>
+      <blockquote class="quote">
+        XSkill 与 Ace-Skill 在 TIR-Bench 上的原论文训练预算均约为 400 次 rollout。
+        受实验费用限制，我们计划先采用每种方法 200 次训练 rollout，即论文训练计算量的 50%：
+        XSkill 对 100 个训练样本各执行 2 次 rollout，Ace-Skill 保留原有 prioritized sampler 并执行 200 次采样。
+        测试阶段先在同一组 50 个分层样本上，以 Vanilla Tools、XSkill 和 Ace-Skill 做公平对比。
+        该实验属于低预算复现与趋势验证，不等同于论文完整训练规模；若观察到明确提升，再扩展到完整测试集。
+      </blockquote>
+    </section>
+
+    <section id="sources" class="panel sources">
+      <h2>论文依据与口径</h2>
+      <ol>
+        <li>
+          <strong>XSkill</strong>, arXiv:2603.12056v2。TIR-Bench 使用 100 train / 200 test；
+          Appendix B, Table 8 给出 Rollouts per Sample (N) = 4、Max Turns = 20。
+          本页据此计算训练主推理量为 100 × 4 = 400。
+        </li>
+        <li>
+          <strong>Ace-Skill</strong>, arXiv:2605.08887v1。第 3.1 节 implementation details
+          给出训练 50 steps、batch size 8、每样本 1 rollout，因此为 50 × 8 × 1 = 400 次采样执行；
+          TIR-Bench 最多 10 agentic turns。
+        </li>
+        <li>
+          两篇论文测试均采用多次 rollout 的 Avg@4 / Pass@4 口径。当前低成本方案将测试改为 rollout=1，
+          目的是先比较相对趋势，不应与论文表格中的 Avg@4 / Pass@4 数值直接横向比较。
+        </li>
+        <li>
+          本页的训练量以 agent rollout 为统一计量单位。XSkill 和 Ace-Skill 在 rollout 之外还会调用模型完成
+          trajectory summary、experience critique/merge 和 skill generation，因此真实 token 成本不能仅按 rollout 数线性计算。
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    TIR-Bench training budget note · Generated for experiment review · 2026-06-06
+  </footer>
+</body>
+</html>
