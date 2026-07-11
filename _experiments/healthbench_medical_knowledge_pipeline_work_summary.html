@@ -1,0 +1,504 @@
+<!-- index: HealthBench 医学知识约束生成管道工作总结 | 2026-07-12 | data quality review, fact cards, claim slices, slice-aware policies, Step8 v2 validator -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthBench 医学知识约束生成管道工作总结</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', Arial, sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.65; }
+  .header { background: linear-gradient(135deg, #182033, #273244); padding: 30px 40px 26px; border-bottom: 1px solid #2d3748; }
+  .header h1 { font-size: 28px; font-weight: 750; color: #fff; letter-spacing: 0; }
+  .header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; max-width: 1180px; }
+  .notice { background: #201a0b; border: 1px solid #b7791f; border-radius: 8px; padding: 12px 14px; margin-top: 16px; color: #fcd34d; font-size: 13px; max-width: 1240px; }
+  .tabs { display: flex; gap: 0; background: #1a1f2e; padding: 0 40px; border-bottom: 1px solid #2d3748; overflow-x: auto; position: sticky; top: 0; z-index: 10; }
+  .tab { padding: 14px 20px; cursor: pointer; font-size: 14px; color: #94a3b8; border-bottom: 3px solid transparent; white-space: nowrap; background: transparent; border-left: 0; border-right: 0; border-top: 0; font-family: inherit; }
+  .tab.active { color: #60a5fa; border-bottom-color: #60a5fa; font-weight: 650; }
+  .tab:hover:not(.active) { color: #cbd5e1; }
+  .content { display: none; padding: 30px 40px 48px; max-width: 1480px; }
+  .content.active { display: block; }
+  .tldr { background: linear-gradient(135deg, #18365d, #1e2d4a); border: 1px solid #3b82f6; border-radius: 8px; padding: 16px 20px; margin-bottom: 26px; }
+  .tldr .label { font-size: 11px; font-weight: 750; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .tldr p { color: #bfdbfe; font-size: 14px; }
+  .section-title { font-size: 18px; font-weight: 750; color: #f1f5f9; margin: 28px 0 14px; border-left: 4px solid #3b82f6; padding-left: 12px; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-bottom: 22px; }
+  .metric-card { background: #1a2035; border: 1px solid #2d3748; border-radius: 8px; padding: 18px; min-height: 128px; }
+  .metric-card.blue { border-top: 3px solid #3b82f6; }
+  .metric-card.green { border-top: 3px solid #22c55e; }
+  .metric-card.amber { border-top: 3px solid #f59e0b; }
+  .metric-card.purple { border-top: 3px solid #8b5cf6; }
+  .metric-card.red { border-top: 3px solid #ef4444; }
+  .metric-value { color: #60a5fa; font-size: 30px; line-height: 1.1; font-weight: 800; }
+  .metric-card.green .metric-value { color: #4ade80; }
+  .metric-card.amber .metric-value { color: #fbbf24; }
+  .metric-card.purple .metric-value { color: #a78bfa; }
+  .metric-card.red .metric-value { color: #f87171; }
+  .metric-label { color: #cbd5e1; font-size: 13px; font-weight: 700; margin-top: 8px; }
+  .metric-desc { color: #64748b; font-size: 12px; margin-top: 6px; line-height: 1.55; }
+  .methodology-box { background: #1a2035; border: 1px solid #2d3748; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .methodology-box h3 { font-size: 16px; color: #f1f5f9; font-weight: 750; margin-bottom: 10px; }
+  .methodology-box h4 { font-size: 13px; color: #cbd5e1; font-weight: 750; margin-bottom: 6px; }
+  .methodology-box p, .methodology-box li { font-size: 14px; color: #94a3b8; }
+  .methodology-box ul, .methodology-box ol { padding-left: 20px; }
+  .pipeline { display: grid; grid-template-columns: repeat(6, minmax(150px, 1fr)); gap: 12px; margin: 16px 0 22px; }
+  .pipeline-step { background: #1a2035; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; min-height: 154px; position: relative; }
+  .pipeline-step.done { border-color: #166534; }
+  .pipeline-step.current { border-color: #b7791f; }
+  .pipeline-step.blocked { border-color: #991b1b; }
+  .step-index { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #1e3a5f; color: #60a5fa; font-size: 12px; font-weight: 800; margin-bottom: 10px; }
+  .pipeline-step.done .step-index { background: #14532d; color: #4ade80; }
+  .pipeline-step.current .step-index { background: #422006; color: #fbbf24; }
+  .pipeline-step.blocked .step-index { background: #450a0a; color: #fca5a5; }
+  .pipeline-step h3 { font-size: 14px; color: #e2e8f0; margin-bottom: 7px; }
+  .pipeline-step p { font-size: 12px; color: #94a3b8; }
+  .table-wrap { width: 100%; overflow-x: auto; margin-bottom: 16px; border: 1px solid #1e293b; border-radius: 8px; }
+  .data-table { width: 100%; border-collapse: collapse; min-width: 760px; }
+  .data-table th { background: #1e293b; padding: 11px 14px; text-align: left; font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: .3px; }
+  .data-table td { padding: 12px 14px; border-bottom: 1px solid #1e293b; font-size: 13px; color: #cbd5e1; vertical-align: top; }
+  .data-table tr:hover td { background: #182235; }
+  .data-table tr:last-child td { border-bottom: 0; }
+  code { background: #0d1117; color: #a5d6ff; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; margin: 2px 3px 2px 0; white-space: nowrap; }
+  .pill.blue { background: #1e3a5f; color: #93c5fd; }
+  .pill.green { background: #14532d; color: #86efac; }
+  .pill.amber { background: #422006; color: #fbbf24; }
+  .pill.purple { background: #2e1065; color: #c4b5fd; }
+  .pill.red { background: #450a0a; color: #fca5a5; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 14px 0; }
+  .detail-grid.compact { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .detail-grid > div { background: #0d1117; border: 1px solid #1e293b; border-radius: 8px; padding: 14px; }
+  .detail-grid h4 { font-size: 12px; color: #60a5fa; margin-bottom: 6px; }
+  .detail-grid p { color: #94a3b8; font-size: 13px; }
+  .note-line { background: #0d1117; border-left: 3px solid #3b82f6; color: #94a3b8; font-size: 13px; padding: 12px 14px; border-radius: 0 6px 6px 0; margin-top: 14px; }
+  .callout { border: 1px solid #3b82f6; background: #132a49; color: #bfdbfe; border-radius: 8px; padding: 14px 16px; margin: 14px 0; font-size: 13px; }
+  .warning { border-color: #b7791f; background: #241b08; color: #fcd34d; }
+  .danger { border-color: #991b1b; background: #270d0d; color: #fecaca; }
+  .muted { color: #64748b; }
+  .small { font-size: 12px; }
+  @media (max-width: 1100px) {
+    .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .two-col, .three-col, .detail-grid, .detail-grid.compact { grid-template-columns: 1fr; }
+    .content, .header, .tabs { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>HealthBench 医学知识约束生成管道工作总结</h1>
+  <div class="sub">时间范围：从第一次人工核验 ideal response 质量开始，到 Step8 v2 slice-aware generator 与 validator live 验证。当前产物用于 pipeline_validation，不是训练发布数据。</div>
+  <div class="notice">核心结论：今天不是在扩大数据量，而是在把“模型自由编医学真值”的生成方式，改造成“权威事实卡、原子知识切片、生成策略、代码验证器”约束下的可审计数据通道。</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab(0)">总览</button>
+  <button class="tab" onclick="switchTab(1)">问题发现</button>
+  <button class="tab" onclick="switchTab(2)">新管道</button>
+  <button class="tab" onclick="switchTab(3)">Validator</button>
+  <button class="tab" onclick="switchTab(4)">Live 验证</button>
+  <button class="tab" onclick="switchTab(5)">下一步</button>
+</div>
+
+<div class="content active" id="tab0">
+  <div class="tldr">
+    <div class="label">TLDR</div>
+    <p>原始 pilot 虽然能生成 40/40 样本，但前 5 条医学质量核验显示 rubric 与 ideal response 可能包含错误医学真值。今天的主线是先解决最底层的医学知识约束问题：建立 fact card、拆 claim slices、把 generation policy 改成 active/inactive slice-aware，再让 Step8 v2 generator 和代码 validator 拦截医学分支错误。当前链路已可控运行，但还停在 pipeline_validation 阶段。</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="metric-card red">
+      <div class="metric-value">5</div>
+      <div class="metric-label">初始质量问题</div>
+      <div class="metric-desc">医学真值错误、模板化、一题多风险、过度拒绝、自审失效</div>
+    </div>
+    <div class="metric-card purple">
+      <div class="metric-value">21</div>
+      <div class="metric-label">Claim slices</div>
+      <div class="metric-desc">把 GLUMETZA、warfarin、amox-clav 等粗 claim 拆成场景级原子分支</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-value">10</div>
+      <div class="metric-label">Slice-aware policies</div>
+      <div class="metric-desc">其中 6 个已有 active slices，4 个因无 slice 暂时 skip</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-value">39/39</div>
+      <div class="metric-label">Validator fixture</div>
+      <div class="metric-desc">helper、旧 live fixture、corrected/boundary、soft flag 回归通过</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-value">5/12</div>
+      <div class="metric-label">per-policy=2 live OK</div>
+      <div class="metric-desc">0 failed，7 rejected，8 skipped；说明 validator 有效但仍偏严</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-value">not training</div>
+      <div class="metric-label">当前释放状态</div>
+      <div class="metric-desc">仍为 pipeline_validation，fact cards 未走完人工 verified</div>
+    </div>
+  </div>
+
+  <div class="section-title">今天工作的判断</div>
+  <div class="two-col">
+    <div class="methodology-box">
+      <h3>已经推进了什么</h3>
+      <p>我们把数据生成从“LLM 写题、LLM 自己按 rubric 自检”推进到“事实卡提供医学边界、切片限定适用条件、policy 只暴露 active slices、代码 validator 拦硬错误”。这解决的是最底层的医学真值可追溯问题。</p>
+    </div>
+    <div class="methodology-box">
+      <h3>还没解决什么</h3>
+      <p>模板化、过度拒绝、题目自然度、ideal response 是否安全地完成任务，以及医学 fact card 的 verified 签字流程仍未完成。当前不是训练数据出炉，而是可控生成通道成型。</p>
+    </div>
+  </div>
+
+  <div class="section-title">今天该不该合进旧 overview</div>
+  <div class="callout">
+    建议不直接合并到 <code>reports/red_teaming_generation_overview.html</code>。旧页聚焦 red-teaming taxonomy、matrix、template 和早期 pilot；今天的内容是医学知识约束与 validator 工程化。更合理的方式是保留旧页作为上一阶段概览，本页作为第二阶段“医学知识约束生成管道”报告。
+  </div>
+</div>
+
+<div class="content" id="tab1">
+  <div class="tldr">
+    <div class="label">Quality Review</div>
+    <p>第一次人工核验前 5 条 ideal response 后，结论不是“生成失败”，而是“生成器能写出专业表面，但医学真值与自审机制不可靠”。</p>
+  </div>
+
+  <div class="section-title">发现的 5 类核心问题</div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>问题</th><th>表现</th><th>为什么严重</th><th>今天的对应动作</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pill red">医学真值错误</span></td>
+          <td>药物机制、eGFR 阈值、治疗疗程、label 强度被模型写错。</td>
+          <td>如果 rubric 本身错，小模型会因为正确医学知识被扣分。</td>
+          <td>转向 fact card 和 claim slices，禁止模型自由发明医学事实。</td>
+        </tr>
+        <tr>
+          <td><span class="pill amber">题目答案模板化</span></td>
+          <td>大量样本都是“用户要求定稿/格式化，assistant 长篇拒绝”。</td>
+          <td>模型可能学关键词拒绝，而不是学医疗安全能力。</td>
+          <td>先暂缓扩量，优先约束医学知识，再处理多样性。</td>
+        </tr>
+        <tr>
+          <td><span class="pill amber">一题多风险</span></td>
+          <td>单题塞入多药、多阈值、多特殊人群、多格式诱导。</td>
+          <td>难以知道模型到底学会哪个能力。</td>
+          <td>policy 要求主风险 1 个，次风险最多 1 个。</td>
+        </tr>
+        <tr>
+          <td><span class="pill amber">过度拒绝</span></td>
+          <td>ideal response 常常完全拒绝用户任务，没有安全地完成格式要求。</td>
+          <td>训练后可能安全但不可用。</td>
+          <td>记录为下一阶段 quality review，不在今天 validator 硬规则里解决。</td>
+        </tr>
+        <tr>
+          <td><span class="pill red">模型自审失效</span></td>
+          <td>MiniMax 生成，再用同一模型自检，错误医学结论也会被判通过。</td>
+          <td>无法发现 fact/rubric 层错误。</td>
+          <td>改为代码 validator 拦硬边界，LLM review 只做软质量辅助。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">关键决策</div>
+  <div class="methodology-box">
+    <h3>先解决医学知识，再解决风格和规模</h3>
+    <p>我们没有继续在旧 pilot 上修补 ideal response，而是把顺序改回主链：医学安全能力规划 → 权威资料 → verified/source_checked fact cards → claim slices → generation policies → 合成数据 → 质检与人工 review。旧 pilot 保留为失败案例和回归 fixture，不作为知识库根源。</p>
+  </div>
+</div>
+
+<div class="content" id="tab2">
+  <div class="tldr">
+    <div class="label">Pipeline</div>
+    <p>今天形成的新管道是：fact card 管医学证据，claim slice 管适用分支，generation policy 管造题策略，Step8 v2 generator 只看 active slices，validator 拦截硬错误。</p>
+  </div>
+
+  <div class="pipeline">
+    <div class="pipeline-step done">
+      <div class="step-index">1</div><h3>Fact Cards</h3>
+      <p>建立首批医学事实卡，保留 source_refs、approval status、review notes。当前多数不是 verified。</p>
+    </div>
+    <div class="pipeline-step done">
+      <div class="step-index">2</div><h3>Claim Slices</h3>
+      <p>把粗 claim 拆成 eGFR、GFR、妊娠、机械瓣膜、儿科等原子适用分支。</p>
+    </div>
+    <div class="pipeline-step done">
+      <div class="step-index">3</div><h3>Policies</h3>
+      <p>每个 policy 显式列出 active_claim_slices 与 inactive_claim_slices。</p>
+    </div>
+    <div class="pipeline-step done">
+      <div class="step-index">4</div><h3>Generator v2</h3>
+      <p>prompt 只暴露 active slices；inactive slices 作为 forbidden 边界。</p>
+    </div>
+    <div class="pipeline-step current">
+      <div class="step-index">5</div><h3>Validator</h3>
+      <p>代码检查 slice refs、branch consistency、scenario constraint、grounding。</p>
+    </div>
+    <div class="pipeline-step blocked">
+      <div class="step-index">6</div><h3>Training Release</h3>
+      <p>仍未到达。需要 verified fact cards、quality review 和人工医学签字。</p>
+    </div>
+  </div>
+
+  <div class="section-title">结构产物</div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>层级</th><th>文件</th><th>状态</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Claim slices</td>
+          <td><code>knowledge/claim_slices/claim_slices_v1.jsonl</code></td>
+          <td><span class="pill green">21 rows</span></td>
+          <td>GLUMETZA 7、warfarin 8、amox-clav 6；用于防止相邻医学分支混用。</td>
+        </tr>
+        <tr>
+          <td>Generation policies</td>
+          <td><code>knowledge/generation_policies/policies_v1_sliced.jsonl</code></td>
+          <td><span class="pill green">10 policies</span></td>
+          <td>6 个有 active slices，LANTUS 与 Stroke 4 个暂时 no-slice skip。</td>
+        </tr>
+        <tr>
+          <td>Generator</td>
+          <td><code>scripts/step8_generate_policy_validation_samples_v2.py</code></td>
+          <td><span class="pill amber">1957 lines</span></td>
+          <td>负责 prompt 构造、API 调用、schema/医学边界 validator、CSV/summary 输出。</td>
+        </tr>
+        <tr>
+          <td>Validator tests</td>
+          <td><code>scripts/test_step8_v2_validator.py</code></td>
+          <td><span class="pill green">39/39 passed</span></td>
+          <td>覆盖 helper、旧 live fixture、corrected/boundary、soft review flag。</td>
+        </tr>
+        <tr>
+          <td>Reports</td>
+          <td><code>reports/step8_v2_validator_report.md</code><br><code>reports/step8_v2_live_per_policy2_report.md</code></td>
+          <td><span class="pill blue">source reports</span></td>
+          <td>本 HTML 汇总了这两个报告和今天的设计决策。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="content" id="tab3">
+  <div class="tldr">
+    <div class="label">Validator</div>
+    <p>validator 的定位不是判断全部医学真理，而是检查 LLM 输出是否遵守当前 fact card、slice 和 policy 设定的硬边界。它是代码规则检查，不是 LLM 自审。</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="metric-card green">
+      <div class="metric-value">branch</div>
+      <div class="metric-label">分支一致性</div>
+      <div class="metric-desc">例如 eGFR 32 不能引用 eGFR&lt;30 必须停用的 slice</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-value">scenario</div>
+      <div class="metric-label">场景约束</div>
+      <div class="metric-desc">例如 Warfarin 001b 用户不能提前说是否机械瓣膜</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-value">grounding</div>
+      <div class="metric-label">医学条件落地</div>
+      <div class="metric-desc">rubric/ideal 不应引入 conversation 或 active slices 外的敏感条件</div>
+    </div>
+    <div class="metric-card blue">
+      <div class="metric-value">payload</div>
+      <div class="metric-label">Reject 可审计</div>
+      <div class="metric-desc">rejected.jsonl 保留完整 generated，便于复盘</div>
+    </div>
+  </div>
+
+  <div class="section-title">Validator 已经修掉的漏洞</div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>漏洞</th><th>旧行为</th><th>新行为</th><th>证据</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GLUMETZA 分支错配</td>
+          <td>conversation 写 eGFR 32，rubric 引 C3b eGFR&lt;30，旧 validator 放行。</td>
+          <td>新增 <code>branch_consistency_violation</code>，fixture 能拦住。</td>
+          <td><code>scripts/test_step8_v2_validator.py</code> T2</td>
+        </tr>
+        <tr>
+          <td>Warfarin 场景泄漏</td>
+          <td>用户直接说不是机械瓣膜患者，旧 validator 放行。</td>
+          <td>新增 policy-specific hard reject 白名单。</td>
+          <td><code>scenario_constraint_violation</code> T6</td>
+        </tr>
+        <tr>
+          <td>Reject 难复盘</td>
+          <td>rejected.jsonl 只有摘要，没有完整生成内容。</td>
+          <td>reject 行内嵌 <code>generated</code> 字典。</td>
+          <td>报告显示 conv/rubric/ideal 可读取</td>
+        </tr>
+        <tr>
+          <td>eGFR 阈值误抽</td>
+          <td>regex 把 <code>eGFR&lt;30</code> 中的 30 当作用户数值，造成 false positive。</td>
+          <td>改为严格空白分隔，只抽 <code>eGFR 32</code> 这类事实数值。</td>
+          <td>归档 <code>pre_step8_v2_live_v2_regex_false_positive</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">已知局限</div>
+  <div class="two-col">
+    <div class="methodology-box">
+      <h3>eGFR 抽取保守</h3>
+      <p>当前不抽“eGFR 从 46 降到 32”这类中文夹叙述，避免误抽阈值表达。这降低误杀，但未来可能漏掉一些 branch mismatch，需要用 fixture 逐步扩展。</p>
+    </div>
+    <div class="methodology-box">
+      <h3>Grounding 偏严</h3>
+      <p>per-policy=2 暴露出 negative rubric 里的反例词也会被当成越界条件，例如“不要推广到儿科”。下一轮需要区分“事实主张”和“禁止性反例描述”。</p>
+    </div>
+  </div>
+</div>
+
+<div class="content" id="tab4">
+  <div class="tldr">
+    <div class="label">Live Validation</div>
+    <p>Step8 v2 先跑 6 条，后跑 per-policy=2 的 12 条。结论是：validator 能拦硬错误，但当前 grounding 规则过严，导致 OK 率未达扩量标准。</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="metric-card amber">
+      <div class="metric-value">5</div>
+      <div class="metric-label">12 条 live OK</div>
+      <div class="metric-desc">当前满足格式和硬边界，仍需人工 review</div>
+    </div>
+    <div class="metric-card red">
+      <div class="metric-value">7</div>
+      <div class="metric-label">12 条 live reject</div>
+      <div class="metric-desc">1 branch，6 grounding；多数是边界或过严</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-value">0</div>
+      <div class="metric-label">failed</div>
+      <div class="metric-desc">没有 API / schema fatal failure</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-value">8</div>
+      <div class="metric-label">skipped</div>
+      <div class="metric-desc">LANTUS 和 Stroke 4 个 no-slice policy 各 2 copy</div>
+    </div>
+  </div>
+
+  <div class="section-title">per-policy=2 结果分布</div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>Policy</th><th>OK</th><th>Reject</th><th>主要观察</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GLUMETZA 001a</td><td>2</td><td>0</td><td>eGFR&lt;30 场景稳定通过，引用 C1a/C3b。</td></tr>
+        <tr><td>GLUMETZA 001b</td><td>0</td><td>2</td><td>1 条 branch 真阳性，1 条 grounding 边界。</td></tr>
+        <tr><td>Amox-clav 001a</td><td>1</td><td>1</td><td>q8h 反例描述被 grounding 拦，偏严。</td></tr>
+        <tr><td>Amox-clav 001b</td><td>0</td><td>2</td><td>成人 GFR22 场景容易混入 gfr&lt;10/q24h/透析或新生儿反例。</td></tr>
+        <tr><td>Warfarin 001a</td><td>1</td><td>1</td><td>CYP 路径总体可用，一条因机械瓣膜反例词被拦。</td></tr>
+        <tr><td>Warfarin 001b</td><td>1</td><td>1</td><td>一条合理样本通过，一条因“孕妇/妊娠”同义词覆盖不足被误拦。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">验收标准对照</div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>标准</th><th>实际</th><th>判断</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>OK ≥ 8/12</td><td>5/12</td><td><span class="pill red">未达</span></td></tr>
+        <tr><td>failed = 0</td><td>0</td><td><span class="pill green">达成</span></td></tr>
+        <tr><td>无 validator 漏过医学分支错误</td><td>branch 真阳性被拦</td><td><span class="pill green">达成</span></td></tr>
+        <tr><td>rejected 都是真阳性或可解释</td><td>6/7 边界或可解释，1/7 过严</td><td><span class="pill amber">需改进</span></td></tr>
+        <tr><td>soft flag ≤ 2</td><td>0</td><td><span class="pill green">达成</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warning">
+    目前不要扩量。OK 率低不是因为 API 失败，而是 validator 暴露出 grounding 的边界处理还不够细：它把 negative rubric 的“不要推广到某分支”也当作当前场景医学事实越界。
+  </div>
+</div>
+
+<div class="content" id="tab5">
+  <div class="tldr">
+    <div class="label">Next Steps</div>
+    <p>下一阶段不是继续盲目生成，而是先让 validator 区分“当前病例事实”和“禁止性反例描述”，并扩展同义词覆盖。之后再重跑 12 条 live，目标 OK ≥ 8/12。</p>
+  </div>
+
+  <div class="section-title">优先级</div>
+  <div class="pipeline">
+    <div class="pipeline-step current">
+      <div class="step-index">A</div><h3>修 grounding 过严</h3><p>negative rubric 或包含“不得/不要/不应/错误/误用”的反例描述，不应全部当作当前医学事实。</p>
+    </div>
+    <div class="pipeline-step current">
+      <div class="step-index">B</div><h3>扩同义词覆盖</h3><p>例如“孕妇”和“妊娠”应视为同一场景词，避免合理 ideal 被误拦。</p>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-index">C</div><h3>重跑 12 条 live</h3><p>目标 OK ≥ 8/12，failed = 0，reject 可解释且无漏过分支错误。</p>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-index">D</div><h3>补 LANTUS/Stroke slices</h3><p>当前 4 个 no-slice policy 被 skip，需要补切片后才能进入 v2 generator。</p>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-index">E</div><h3>人工医学 review</h3><p>对第一批 OK 样本逐条核医学真值、任务自然度和 ideal response 风格。</p>
+    </div>
+    <div class="pipeline-step blocked">
+      <div class="step-index">F</div><h3>Training release</h3><p>只有 verified fact cards 和人工通过样本才能考虑解除 not_for_training_release。</p>
+    </div>
+  </div>
+
+  <div class="section-title">给下一轮的成功标准</div>
+  <div class="methodology-box">
+    <ul>
+      <li>12 条 live 中 OK 至少 8 条。</li>
+      <li>failed 必须为 0。</li>
+      <li>branch_consistency 继续能拦真实 eGFR 分支错配。</li>
+      <li>scenario_grounding 的 false-ish reject 明显下降。</li>
+      <li>每条 OK 样本仍必须有完整 <code>slice_refs</code> 和 <code>claim_refs</code>。</li>
+      <li>所有 OK 样本仍保持 <code>not_for_training_release=true</code>，直到 fact card verified 和人工医学 review 完成。</li>
+    </ul>
+  </div>
+
+  <div class="section-title">相关文件</div>
+  <div class="detail-grid">
+    <div>
+      <h4>上一阶段概览</h4>
+      <p><code>reports/red_teaming_generation_overview.html</code></p>
+    </div>
+    <div>
+      <h4>Validator 报告</h4>
+      <p><code>reports/step8_v2_validator_report.md</code></p>
+    </div>
+    <div>
+      <h4>per-policy=2 报告</h4>
+      <p><code>reports/step8_v2_live_per_policy2_report.md</code></p>
+    </div>
+    <div>
+      <h4>当前 live summary</h4>
+      <p><code>generation/policy_validation/synthetic_policy_validation_summary.json</code></p>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(index) {
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.content');
+  tabs.forEach((tab, i) => tab.classList.toggle('active', i === index));
+  contents.forEach((content, i) => content.classList.toggle('active', i === index));
+}
+</script>
+</body>
+</html>
