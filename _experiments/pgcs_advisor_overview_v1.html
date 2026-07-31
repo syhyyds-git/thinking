@@ -1,0 +1,722 @@
+<!-- index: Provenance-Grounded Closure Synthesis · Advisor Project Overview v1 | 2026-07-31 | 面向资深研究者的对外汇报页:定位、研究问题、Part A/B 论文定位与方法进度 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Provenance-Grounded Closure Synthesis · Advisor Project Overview v1</title>
+<style>
+  /* ============== reset / base ============== */
+  *,*::before,*::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "Noto Sans CJK SC",
+      Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.72;
+    color: #1f2937;
+    background: #f6f7f9;
+    -webkit-font-smoothing: antialiased;
+  }
+  code, pre, .mono { font-family: "JetBrains Mono", "Fira Code", "SF Mono",
+    Menlo, Consolas, "Liberation Mono", monospace; }
+  a { color: #1a4f6e; text-decoration: none; border-bottom: 1px dotted #1a4f6e44; }
+  a:hover { color: #0c3245; border-bottom-color: #0c3245; }
+
+  /* ============== topbar ============== */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: #11212e; color: #e6edf3;
+    padding: 10px 22px;
+    border-bottom: 1px solid #1c3445;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .topbar .brand { font-weight: 600; letter-spacing: 0.02em; font-size: 14px; }
+  .topbar .brand .accent { color: #7ec4d6; }
+  .topbar .meta { color: #94a8b8; font-size: 12px; }
+  .topbar .badge-inline {
+    background: #243a4d; color: #cfe6ee; border: 1px solid #34566f;
+    padding: 2px 8px; border-radius: 999px; font-size: 11px;
+  }
+
+  /* ============== layout ============== */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 0;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ============== sidebar ============== */
+  nav.sidebar {
+    position: sticky; top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    padding: 28px 12px 28px 4px;
+    border-right: 1px solid #e3e7eb;
+    background: #f6f7f9;
+  }
+  nav.sidebar .group-title {
+    font-size: 11px; color: #6b7785; text-transform: uppercase;
+    letter-spacing: 0.1em; margin: 16px 0 6px 8px; font-weight: 600;
+  }
+  nav.sidebar a.nav-item {
+    display: block; padding: 7px 10px; border-radius: 6px;
+    color: #3a4a58; font-size: 13px; line-height: 1.4;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    margin-bottom: 2px;
+  }
+  nav.sidebar a.nav-item:hover { background: #eaeef2; }
+  nav.sidebar a.nav-item.active {
+    background: #e7f1f5; color: #0c3245; font-weight: 600;
+    border-left-color: #1a4f6e;
+  }
+
+  /* ============== main ============== */
+  main { padding: 32px 8px 60px 36px; min-width: 0; }
+
+  /* ============== hero ============== */
+  .hero {
+    background: linear-gradient(135deg, #11212e 0%, #1a3a52 100%);
+    color: #e6edf3;
+    border-radius: 14px;
+    padding: 36px 38px;
+    margin: 0 0 32px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .hero .kicker {
+    font-size: 12px; color: #7ec4d6; text-transform: uppercase;
+    letter-spacing: 0.16em; font-weight: 600; margin-bottom: 10px;
+  }
+  .hero h1 {
+    font-size: 30px; line-height: 1.25; margin: 0 0 14px 0;
+    color: #ffffff; letter-spacing: -0.005em; font-weight: 700;
+  }
+  .hero .lede {
+    font-size: 16px; line-height: 1.6; color: #c2d1dc;
+    max-width: 760px; margin: 0;
+  }
+  .hero .lede strong { color: #ffffff; }
+
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px; margin-top: 24px;
+  }
+  .hero-stat {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .hero-stat .v { font-size: 18px; font-weight: 700; color: #ffffff; line-height: 1.2; }
+  .hero-stat .v.warn { color: #ffb380; }
+  .hero-stat .v.audit { color: #ffd699; }
+  .hero-stat .k {
+    font-size: 11px; color: #94a8b8; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-top: 4px;
+  }
+
+  /* ============== typography ============== */
+  h1 { font-size: 26px; margin: 0; color: #11212e; }
+  h2 {
+    font-size: 22px; margin: 56px 0 4px 0; color: #11212e;
+    letter-spacing: -0.005em;
+  }
+  h2 .num {
+    display: inline-block; font-family: monospace; font-size: 12px;
+    color: #94a8b8; font-weight: 600; letter-spacing: 0.1em;
+    margin-right: 10px; vertical-align: 2px;
+  }
+  h2 .sub {
+    display: block; font-size: 14px; color: #5b6976; font-weight: 400;
+    margin-top: 4px; letter-spacing: 0;
+  }
+  h3 { font-size: 17px; margin: 24px 0 8px 0; color: #1f3a4d; }
+  p { margin: 10px 0; max-width: 780px; }
+
+  section { margin-bottom: 12px; }
+  section + section { padding-top: 4px; }
+
+  /* ============== lede paragraph ============== */
+  .lede-p {
+    font-size: 17px; color: #2a3a48; max-width: 780px;
+  }
+
+  /* ============== cards / panels ============== */
+  .card {
+    background: #ffffff; border: 1px solid #e3e7eb; border-radius: 10px;
+    padding: 18px 22px; margin: 14px 0;
+  }
+  .panel-title {
+    font-size: 12px; color: #6b7785; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 8px; font-weight: 600;
+  }
+
+  /* ============== two-column layout for sections ============== */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin: 14px 0;
+  }
+  @media (max-width: 880px) { .two-col { grid-template-columns: 1fr; } }
+
+  .concept-card {
+    background: #fff; border: 1px solid #e3e7eb; border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .concept-card .tag {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 9px; border-radius: 999px; margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .concept-card.partA .tag { background: #e7f1f9; color: #0d3a64; }
+  .concept-card.partB .tag { background: #f3e6f7; color: #4a1166; }
+  .concept-card h3 { margin: 0 0 8px 0; font-size: 17px; color: #11212e; }
+  .concept-card p { font-size: 14px; color: #3a4a58; margin: 6px 0 0 0; }
+  .concept-card .meta {
+    margin-top: 10px; font-size: 12px; color: #6b7785;
+    padding-top: 10px; border-top: 1px dashed #e3e7eb;
+  }
+
+  /* ============== badges ============== */
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px; vertical-align: middle;
+    margin-right: 4px; letter-spacing: 0.02em;
+  }
+  .badge.done    { background: #e6f4ea; color: #1b5e20; border: 1px solid #2e7d32; }
+  .badge.method  { background: #e7f1f9; color: #0d3a64; border: 1px solid #1976d2; }
+  .badge.audit   { background: #fff4e0; color: #8a4500; border: 1px solid #ef6c00; }
+  .badge.novelty { background: #f3e6f7; color: #4a1166; border: 1px dashed #6a1b9a; }
+  .badge.spec    { background: #f0f0f0; color: #555; border: 1px solid #b0b0b0; }
+  .badge.blocked { background: #fbe9e7; color: #8a1c10; border: 1px solid #c62828; }
+  .badge.needs   { background: #fff8e1; color: #6b5300; border: 1px solid #d6a800; }
+  .badge.legend  { background: #ffffff; color: #555; border: 1px solid #cbd2d9; }
+
+  /* ============== tables (compact) ============== */
+  table.t {
+    width: 100%; border-collapse: collapse; margin: 10px 0;
+    background: #fff; border: 1px solid #e3e7eb; font-size: 13px;
+  }
+  table.t th, table.t td {
+    border: 1px solid #e3e7eb; padding: 7px 10px; text-align: left;
+    vertical-align: top;
+  }
+  table.t th {
+    background: #f0f3f6; font-weight: 600; color: #344a5b; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  table.t td.mono, table.t td code { font-family: "JetBrains Mono", "SF Mono",
+    Menlo, Consolas, monospace; font-size: 12px; }
+  table.t tr:nth-child(even) td { background: #fafbfc; }
+
+  /* ============== related work table (compact, 4 cols) ============== */
+  table.rw th, table.rw td { font-size: 12.5px; padding: 8px 9px; }
+  table.rw td.adj { color: #1b5e20; }
+  table.rw td.diff { color: #4a1166; }
+  table.rw td.work { font-weight: 600; color: #11212e; min-width: 110px; }
+
+  /* ============== pipeline diagram ============== */
+  .pipeline {
+    background: #fff; border: 1px solid #e3e7eb; border-radius: 10px;
+    padding: 22px 24px; margin: 18px 0;
+  }
+  .pipeline-flow {
+    display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+    font-family: "JetBrains Mono", "SF Mono", Menlo, monospace; font-size: 12.5px;
+    justify-content: center;
+  }
+  .pipeline-flow .node {
+    background: #eaf3f7; border: 1px solid #b6d2dc; color: #0c3245;
+    padding: 8px 12px; border-radius: 6px; white-space: nowrap;
+  }
+  .pipeline-flow .node.split { background: #fbe9d2; border-color: #e0b687; color: #6b3d00; }
+  .pipeline-flow .node.terminal { background: #d8ecd9; border-color: #82b487; color: #1b5e20; }
+  .pipeline-flow .arrow { color: #94a8b8; font-weight: 700; padding: 0 2px; }
+
+  .pipeline-legend {
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px dashed #e3e7eb;
+    font-size: 12.5px; color: #5b6976; text-align: center;
+  }
+
+  /* ============== example card ============== */
+  .example-card {
+    background: #fff; border: 1px solid #e3e7eb; border-radius: 10px;
+    padding: 18px 20px; margin: 10px 0;
+  }
+  .example-card .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .example-card .head .row-id {
+    font-family: monospace; font-size: 13px; color: #0c3245; font-weight: 600;
+  }
+  .example-card .body { font-size: 14px; color: #3a4a58; }
+  .example-card .body p { margin: 4px 0; }
+  .example-card .targets {
+    display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0;
+  }
+  .example-card .target {
+    background: #eef5f8; border: 1px solid #b6d2dc; color: #0c3245;
+    border-radius: 4px; padding: 2px 8px; font-size: 11.5px;
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+  }
+  .example-card .note {
+    font-size: 12px; color: #6b7785; font-style: italic; margin-top: 8px;
+    padding-top: 8px; border-top: 1px dashed #e3e7eb;
+  }
+
+  /* ============== callouts ============== */
+  .callout {
+    border-left: 4px solid; padding: 12px 16px; margin: 16px 0;
+    background: #ffffff; border-radius: 4px; max-width: 780px;
+  }
+  .callout.info    { border-color: #1976d2; background: #f0f6fc; }
+  .callout.warn    { border-color: #c62828; background: #fbeaea; }
+  .callout.audit   { border-color: #ef6c00; background: #fff7e8; }
+  .callout.novelty { border-color: #6a1b9a; background: #f9f1fc; }
+  .callout p { margin: 4px 0; }
+  .callout strong { color: #11212e; }
+
+  /* ============== appendix details blocks ============== */
+  details.appendix {
+    border: 1px solid #e3e7eb; border-radius: 10px;
+    background: #ffffff; margin: 12px 0;
+    overflow: hidden;
+  }
+  details.appendix > summary {
+    cursor: pointer; padding: 14px 20px; font-size: 15px; color: #11212e;
+    font-weight: 600; list-style: none;
+    background: #fafbfc; border-bottom: 1px solid #e3e7eb;
+  }
+  details.appendix > summary::-webkit-details-marker { display: none; }
+  details.appendix > summary::before {
+    content: "▸"; color: #94a8b8; margin-right: 10px; font-weight: 400;
+  }
+  details.appendix[open] > summary::before { content: "▾"; }
+  details.appendix > .body { padding: 16px 22px; font-size: 14px; }
+  details.appendix > .body h4 { font-size: 13px; margin: 12px 0 6px 0; }
+
+  /* ============== path/code inline ============== */
+  .path {
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px; color: #0c3245;
+    background: #eef5f8; border: 1px solid #b6d2dc;
+    padding: 1px 6px; border-radius: 3px;
+  }
+
+  /* ============== footer ============== */
+  footer.page-foot {
+    margin-top: 40px; padding-top: 14px;
+    border-top: 1px solid #e3e7eb; font-size: 12px; color: #6b7785;
+    max-width: 780px;
+  }
+
+  /* ============== next-steps list ============== */
+  ul.next-steps { list-style: none; padding-left: 0; margin: 14px 0; }
+  ul.next-steps > li {
+    padding: 10px 0; border-bottom: 1px dashed #e3e7eb;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  ul.next-steps > li:last-child { border-bottom: 0; }
+  ul.next-steps .step-num {
+    flex-shrink: 0; width: 24px; height: 24px; line-height: 24px;
+    background: #11212e; color: #fff; text-align: center;
+    border-radius: 50%; font-size: 12px; font-weight: 700;
+  }
+  ul.next-steps .step-body { font-size: 14px; color: #2a3a48; }
+  ul.next-steps .step-body strong { color: #11212e; }
+
+  /* ============== legend block ============== */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px;
+    color: #5b6976; margin: 12px 0;
+    padding: 10px 14px; background: #fafbfc; border: 1px solid #e3e7eb;
+    border-radius: 6px;
+  }
+  .legend .item { display: flex; align-items: center; gap: 6px; }
+  .legend .item .badge { margin: 0; }
+
+  /* ============== responsive ============== */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; padding: 0 14px; }
+    nav.sidebar {
+      position: static; height: auto; max-height: 220px;
+      border-right: none; border-bottom: 1px solid #e3e7eb;
+      padding: 12px 8px; overflow-y: auto;
+    }
+    main { padding: 20px 4px 40px 4px; }
+    .topbar { padding: 8px 14px; }
+    .hero { padding: 24px 22px; }
+    .hero h1 { font-size: 22px; }
+    .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    h2 { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand"><span class="accent">PGCS</span> · Advisor Project Overview v1</span>
+  <span class="badge-inline">2026-07-31</span>
+  <span class="badge-inline">面向资深研究者</span>
+  <span class="meta">离线 HTML · 无远程依赖</span>
+</header>
+
+<div class="layout">
+
+  <!-- ============== SIDEBAR ============== -->
+  <nav class="sidebar" id="sidebar">
+    <div class="group-title">主汇报</div>
+    <a class="nav-item" href="#s1">1 · 30 秒定位</a>
+    <a class="nav-item" href="#s2">2 · 研究问题与假设</a>
+    <a class="nav-item" href="#s3">3 · Part A / Part B 与相关工作</a>
+    <a class="nav-item" href="#s4">4 · 方法总览</a>
+  </nav>
+
+  <!-- ============== MAIN ============== -->
+  <main>
+
+    <!-- ========== HERO ========== -->
+    <div class="hero">
+      <div class="kicker">Provenance-Grounded Closure Synthesis</div>
+      <h1>从独立来源构造可重放的<br>专业 Full 任务,并派生对齐的 Local 监督</h1>
+      <p class="lede">
+        本项目面向 <strong>4B 级别 base model</strong> 的专业 SFT。
+        把"<strong>独立来源</strong>"作为事实基底，把"<strong>病例/合同/测量</strong>"作为独立合成 scenario，
+        构造 <code>Evidence → Operation → Criterion → Answer/Action</code> 闭环，
+        再从<em>同一闭环</em>派生<em>配对</em>的 Local 与 Full 任务。
+      </p>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="v">49 / 49</div>
+          <div class="k">Taxonomy rows 已整组收口</div>
+        </div>
+        <div class="hero-stat">
+          <div class="v">184 / 184</div>
+          <div class="k">Provenance replay</div>
+        </div>
+        <div class="hero-stat">
+          <div class="v audit">0</div>
+          <div class="k">ADMISSION_READY</div>
+        </div>
+        <div class="hero-stat">
+          <div class="v warn">0 accepted</div>
+          <div class="k">训练样本</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== §1 ========== -->
+    <section id="s1">
+      <h2><span class="num">01</span>30 秒定位<span class="sub">一句话、一边界、一状态</span></h2>
+
+      <p class="lede-p">
+        当前所有交付物均为 <span class="badge audit">audit_only</span>，
+        <span class="badge needs">formal_generation_eligible = false</span>。
+        49 行 internal source closure 已完成，但许可证与人工批准仍未签字——
+        <strong>本轮是研究基础设施与内部审计产物，不是论文主数据集</strong>。
+      </p>
+
+      <div class="callout warn">
+        <p><strong>关键边界（请勿误读为已完成数据集）</strong></p>
+        <ul style="margin:6px 0 0 18px; font-size:14px;">
+          <li><strong>Internal source closure ≠ Formal admission</strong>：49/49 row bundle 已闭合，但 license 与 human approval 仍 pending。</li>
+          <li><strong>Formal admission ≠ Generation eligibility</strong>：当前 48 行 <code>FORMAL_REVIEW_REQUIRED</code>，1 行 (NHS child fever) 已被 final overlay 修复，但所有行仍 ineligible。</li>
+          <li><strong>Generation eligibility ≠ Trainable</strong>：即使 eligibility 打开，仍需独立 SFT 评估才能宣称 trainable。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== §2 ========== -->
+    <section id="s2">
+      <h2><span class="num">02</span>研究问题与假设<span class="sub">为什么需要 Local + Full 配对监督</span></h2>
+
+      <h3>问题</h3>
+      <p>
+        普通专业 Full 任务的 SFT 把"<em>证据理解 + 必要操作 + 评分要求 + 最终交付</em>"压缩在
+        一个长监督信号里。对 4B 模型而言，这个信号太粗——outcome reward 稀疏、criterion
+        互相覆盖、局部正确不等于完整正确。这是 RTT、SCRL、Omanic 都指出的现象，
+        也是本项目要解决的问题。
+      </p>
+
+      <h3>假设 (当前可辩护表述)</h3>
+      <div class="callout novelty">
+        <p>
+          <strong>本文不重复主张"细粒度监督有用"。</strong>
+          本文要研究的是：<em>在相同来源池、样本数、训练 token、teacher、审核预算下，
+          从同一来源闭环派生的 Local + Full 配对监督
+          是否优于 Full-only、Local-only、Random-Decomposition Local + Full 与 Rubric-Local + Full？</em>
+        </p>
+        <p style="margin-top:6px;">
+          这是 SCRL / RTT / Omanic 都未完全回答的问题，也是 Part B 的核心可证伪点。
+        </p>
+      </div>
+
+      <p>
+        <span class="badge done">已实现</span>
+        49 行 row-first source closure 与 provenance replay 完成。
+        <span class="badge method">方法设计</span>
+        Part A 数据通道、Part B Local projection、6 类引擎合同已冻结。
+        <span class="badge novelty">待证假设</span>
+        同闭环配对监督的 local-to-global 收益尚未实验验证。
+      </p>
+    </section>
+
+    <!-- ========== §3 ========== -->
+    <section id="s3">
+      <h2><span class="num">03</span>Part A / Part B 与相关工作<span class="sub">我们站在哪、想贡献什么、还差什么</span></h2>
+
+      <p>
+        本节是论文定位的最核心一节。下方对照表整理了 6 篇最相关工作：
+        它们分别覆盖了 Part A 或 Part B 的某些维度，但没有一篇同时做到
+        <em>独立来源 + 闭环绑定 + 同源 Local/Full + 同预算联合 SFT</em>。
+        本文剩下的可辩护差异是它们的<em>组合方式与验证问题</em>。
+      </p>
+
+      <div class="two-col">
+        <div class="concept-card partA">
+          <span class="tag">PART A</span>
+          <h3>Grounded Task-Closure Construction</h3>
+          <p>
+            从独立来源构造 <code>Evidence → Operation → Criterion → Answer/Action</code> 闭环，
+            生成 Full 任务、ideal response 与 answer bindings。
+            可独立形成 <code>closure_full_only</code> 训练集。
+          </p>
+          <div class="meta"><span class="badge done">数据通道已冻结</span> <span class="badge audit">产物 audit_only</span></div>
+        </div>
+        <div class="concept-card partB">
+          <span class="tag">PART B</span>
+          <h3>Criterion-Preserving Multi-Granular Synthesis</h3>
+          <p>
+            从<em>同一</em>闭环派生对齐的 Local 与 Full 任务，相同 token 预算下联合 SFT，
+            检验 local-to-global composition gap 能否被缩小。
+            Part B 必须消费 Part A 产物，不能独立成方法。
+          </p>
+          <div class="meta"><span class="badge method">设计冻结</span> <span class="badge novelty">配对监督收益尚需实验</span></div>
+        </div>
+      </div>
+
+      <h3>6 篇最相关工作对照</h3>
+      <div class="legend">
+        <div class="item"><span class="badge novelty">待核</span> 表示需要查全文确认</div>
+        <div class="item"><span class="badge legend">Adj</span> 本文采用/借鉴</div>
+        <div class="item"><span class="badge legend">Diff</span> 本文主张的差异</div>
+      </div>
+
+      <table class="t rw">
+        <thead>
+          <tr>
+            <th style="width:130px;">工作</th>
+            <th style="width:90px;">最贴近</th>
+            <th>采用/借鉴 (Adj)</th>
+            <th>主张的差异 (Diff)</th>
+            <th style="width:110px;">待核</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="work">RTT<br><span style="font-size:11px;color:#5b6976;">Rubrics to Tokens</span></td>
+            <td>Part B 邻近</td>
+            <td class="adj">整体 rubric 存在 reward sparsity / ambiguity；原子 criterion 与 4B 模型匹配</td>
+            <td class="diff">RTT 是 token-level RL credit；本文是 task-level SFT，粒度不同</td>
+            <td><span class="badge novelty">token-credit 边界需核</span></td>
+          </tr>
+          <tr>
+            <td class="work">SCRL<br><span style="font-size:11px;color:#5b6976;">Subproblem Curriculum RL</span></td>
+            <td>Part B 最重要</td>
+            <td class="adj">outcome reward 太粗；子问题有依赖的 curriculum 优于孤立子问题；Qwen3-4B +4.1 分</td>
+            <td class="diff">SCRL 子问题源自 reasoning chain；本文 Local 源自独立来源闭环；保持 SFT 不改 RL</td>
+            <td><span class="badge novelty">budget 对照需核</span></td>
+          </tr>
+          <tr>
+            <td class="work">Omanic<br><span style="font-size:11px;color:#5b6976;">Step-wise Eval Multi-hop</span></td>
+            <td>Part B / 闭环</td>
+            <td class="adj">局部推理 ≠ 全局组合；中间答案可诊断瓶颈</td>
+            <td class="diff">Omanic 是多跳 benchmark；本文是同闭环 Local+Full SFT</td>
+            <td><span class="badge novelty">SFT 设置需核</span></td>
+          </tr>
+          <tr>
+            <td class="work">LongCrafter</td>
+            <td>Part A + B 边界</td>
+            <td class="adj">Evidence-Constraint Graph 约束生成；Local/Shallow vs Global/Deep 区分</td>
+            <td class="diff">其 Local/Global 是任务分类；本文是同闭环派生的<em>配对监督</em></td>
+            <td><span class="badge novelty">同源配对训练需核</span></td>
+          </tr>
+          <tr>
+            <td class="work">ARES<br><span style="font-size:11px;color:#5b6976;">Automated Rubric Synthesis</span></td>
+            <td>Part A 最重要</td>
+            <td class="adj">document + question + answer + rubric 联合生成；question-specific rubric 有效</td>
+            <td class="diff">ARES 无 E/O/C/A 图、无 required operation + answer binding、无同闭环 Local+Full SFT</td>
+            <td><span class="badge novelty">closed-loop SFT 变体需核</span></td>
+          </tr>
+          <tr>
+            <td class="work">InfiMed-ORBIT</td>
+            <td>Part A / 4B 场景</td>
+            <td class="adj">case-conditioned rubric 提升 HealthBench-Hard 7.0→27.5 (2k 样本)</td>
+            <td class="diff">ORBIT 是 rubric-RL；本文要求 criterion 有独立来源 + operation binding</td>
+            <td><span class="badge novelty">criterion-level SFT 需核</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:13px; color:#5b6976;">
+        内容来自 <span class="path">docs/paper-idea-related-work-part-a-part-b.md</span>。
+        若三项关键核查（LongCrafter 同源配对 / SCRL budget 对照 / ORBIT criterion SFT）
+        与当前摘要一致，本文最稳妥的 novelty 是
+        <em>"来源闭环约束的、可绑定的多粒度任务合成与联合 SFT"</em>，而非任何单点监督机制。
+      </p>
+    </section>
+
+    <!-- ========== §4 ========== -->
+    <section id="s4">
+      <h2><span class="num">04</span>方法总览<span class="sub">一张图 + 一张进度表 + 三条边界</span></h2>
+
+      <div class="pipeline">
+        <div class="pipeline-flow">
+          <span class="node">原始资料</span>
+          <span class="arrow">→</span>
+          <span class="node">可用规则</span>
+          <span class="arrow">→</span>
+          <span class="node">资料包</span>
+          <span class="arrow">→</span>
+          <span class="node">题目骨架</span>
+          <span class="arrow">→</span>
+          <span class="node split">场景 / 附件</span>
+          <span class="arrow">→</span>
+          <span class="node">蓝图</span>
+          <span class="arrow">→</span>
+          <span class="node">闭环 + 答案</span>
+          <span class="arrow">→</span>
+          <span class="node terminal">完整题</span>
+          <span class="arrow">→</span>
+          <span class="node split">拆分题</span>
+          <span class="arrow">→</span>
+          <span class="node terminal">质量门 / 出库</span>
+        </div>
+        <div class="pipeline-legend">
+          蓝 = 资料与规则 · 橙 = 合成场景 · 绿 = 终产物（完整题 / 出库）
+        </div>
+      </div>
+
+      <h3>做到哪了</h3>
+
+      <p>
+        用大白话说,本项目要建一座"<em>原始资料 → 题目 → 训练数据</em>"的工厂。
+        下面这张表告诉我们,工厂里每一道工序现在走到哪一步:
+      </p>
+
+      <table class="t">
+        <thead><tr><th style="width:28%;">工序</th><th>通俗解释</th><th style="width:34%;">当前状态</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>① 收集原始资料</td>
+            <td>把政府指南、行业标准、判例这类权威资料下载下来,登记好版本和版权</td>
+            <td><span class="badge done">已完成</span></td>
+          </tr>
+          <tr>
+            <td>② 资料配齐到 49 个题型</td>
+            <td>把"每种题型需要哪些资料"一一对应齐,确保每道题都有据可查</td>
+            <td><span class="badge done">已完成</span></td>
+          </tr>
+          <tr>
+            <td>③ 资料组合成具体场景</td>
+            <td>把抽到的规则和数字,放进一个虚构的病人 / 合同 / 表格里,组成题目背景</td>
+            <td><span class="badge audit">工厂调试中 · 7 个试点都未跑通</span></td>
+          </tr>
+          <tr>
+            <td>④ 让 AI 写出完整题目 + 答案</td>
+            <td>基于上面的场景,让 AI 写出完整题目和参考答案</td>
+            <td><span class="badge audit">仅 9 个测试样例 · 质量不达标</span></td>
+          </tr>
+          <tr>
+            <td>⑤ 训练 4B 模型</td>
+            <td>用前面生成的题目训练一个 4B 参数的模型,看效果</td>
+            <td><span class="badge novelty">还没开始</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        <strong>一句话总结进度:</strong>
+        资料层(① ②)做扎实了,但"资料 → 题目"的工厂还在调(③ ④),
+        等工厂能稳定产出高质量题目之后,才开始训练模型(⑤)。
+        目前<em>所有产物都只是内部工程样本,不能直接拿去训练模型</em>。
+      </p>
+
+      <h3>三条工程边界(为什么这样设计)</h3>
+
+      <p>
+        <strong>① 资料要分层,不能一锅烩。</strong>
+        规则类(政府指南)只能来自官方原文;病人、合同这类<em>故事背景</em>
+        可以我们自己编,但要留下 seed 和约束以便复核;
+        凡是数字、日期、算术答案,必须由程序算,不能 AI 自由发挥,
+        否则溯源就断了。
+      </p>
+
+      <p>
+        <strong>② AI 和程序各有分工。</strong>
+        AI 写自然语言、挑资料、修题目骨架;
+        程序负责算数字、记录溯源、查重复、做格式归一化、最后放行 / 拦截。
+        两边不能互相替代,否则要么数字不可信,要么文字质量上不去。
+      </p>
+
+      <p>
+        <strong>③ 题型只有 6 种,通用复用。</strong>
+        所有 49 个题型都落在 6 种"题型模板"里(表格分析 / 对账 /
+        规则应用 / 临床判断 / 专业写作 / 证据综合)。
+        新增一道题不改代码,只改配置——这是为了不让工程失控。
+      </p>
+    </section>
+
+    <footer class="page-foot">
+      <p>
+        本页所有数字均来自本地文件，未从外部拉取；离线打开可用。
+        写作日期 2026-07-31。
+      </p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // 侧栏 active 高亮 + 平滑滚动
+  (function () {
+    const navItems = document.querySelectorAll('nav.sidebar a.nav-item');
+    const sections = Array.from(navItems).map(a => {
+      const id = a.getAttribute('href').slice(1);
+      return { id, el: document.getElementById(id), link: a };
+    }).filter(x => x.el);
+
+    function onScroll() {
+      const y = window.scrollY + 90;
+      let activeIdx = 0;
+      for (let i = 0; i < sections.length; i++) {
+        const rect = sections[i].el.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        if (top <= y) activeIdx = i;
+      }
+      navItems.forEach(a => a.classList.remove('active'));
+      if (sections[activeIdx]) sections[activeIdx].link.classList.add('active');
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    navItems.forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if (!el) return;
+        const top = el.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
