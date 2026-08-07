@@ -1,0 +1,481 @@
+<!-- index: 训练数据合成项目汇报 | 2026-08-07 | PGCS 项目现状：48 任务族 / 221 场景 / 5 步生成流水线 / 公开数据源清单 / 3 个待决策问题 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>训练数据合成项目汇报</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    margin: 0;
+    color: #1a1a1a;
+    background: #f5f5f7;
+    line-height: 1.7;
+  }
+  .page {
+    max-width: 980px;
+    margin: 24px auto;
+    background: white;
+    padding: 44px 60px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  @media print {
+    body { background: white; }
+    .page { margin: 0; box-shadow: none; border-radius: 0; padding: 28px 36px; }
+    .page-break { page-break-after: always; }
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 6px;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 14px;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 32px 0 14px;
+    color: #2563eb;
+    border-left: 5px solid #2563eb;
+    padding-left: 12px;
+  }
+  h3 { font-size: 17px; margin: 22px 0 10px; color: #1e40af; }
+  h4 { font-size: 15px; margin: 16px 0 8px; color: #475569; }
+  .sub { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+  p { margin: 10px 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid #d1d5db;
+    padding: 9px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #f3f4f6; font-weight: 600; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  .kpi-row { display: flex; gap: 16px; margin: 20px 0; flex-wrap: wrap; }
+  .kpi {
+    flex: 1 1 180px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-left: 5px solid #2563eb;
+    padding: 18px 22px;
+    border-radius: 6px;
+  }
+  .kpi .num { font-size: 34px; font-weight: 700; color: #1e40af; line-height: 1; }
+  .kpi .lab { font-size: 13px; color: #475569; margin-top: 6px; }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 4px;
+  }
+  .badge-hb { background: #dcfce7; color: #166534; }
+  .badge-apex { background: #fef3c7; color: #92400e; }
+  .badge-fin { background: #f3e8ff; color: #6b21a8; }
+  .callout {
+    border-left: 4px solid #f59e0b;
+    background: #fffbeb;
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 4px;
+  }
+  .callout-blue { border-left-color: #2563eb; background: #eff6ff; }
+  .callout-green { border-left-color: #16a34a; background: #f0fdf4; }
+  .callout-red { border-left-color: #dc2626; background: #fef2f2; }
+  .example {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .example .label {
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .quote {
+    background: #fef9c3;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 8px 0;
+    font-style: italic;
+    color: #713f12;
+  }
+  .toc {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 16px 24px;
+    margin: 16px 0;
+  }
+  .toc ol { margin: 0; padding-left: 22px; }
+  .toc li { margin: 8px 0; }
+  .toc a { color: #2563eb; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; margin-top: 28px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+  ul.tight { margin: 8px 0; padding-left: 24px; }
+  ul.tight li { margin: 4px 0; }
+  ol.tight { margin: 8px 0; padding-left: 24px; }
+  ol.tight li { margin: 6px 0; }
+  .step-flow {
+    display: flex;
+    gap: 8px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .step {
+    flex: 1 1 160px;
+    background: white;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 13px;
+    position: relative;
+  }
+  .step .n {
+    background: #2563eb;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .step .t { font-weight: 600; margin-bottom: 4px; color: #1e40af; }
+  .arrow { align-self: center; color: #94a3b8; font-size: 20px; }
+  .q-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 14px 0;
+    background: #fafbfc;
+  }
+  .q-card .qn {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-weight: 600;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .q-card .qt {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1e40af;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1: 项目是什么 + 数据从哪来 ============ -->
+<div class="page page-break">
+  <h1>训练数据合成项目汇报</h1>
+  <div class="sub">2026-08-07 · 现状与下一步计划</div>
+
+  <div class="toc">
+    <strong>目录</strong>
+    <ol>
+      <li><a href="#p1">这个项目在做什么</a></li>
+      <li><a href="#p2">数据来源：3 个公开 benchmark</a></li>
+      <li><a href="#p3">48 个任务族：我们对原 benchmark 的归纳</a></li>
+      <li><a href="#p4">221 个具体场景：任务族的实例化</a></li>
+      <li><a href="#p5">数据怎么造出来：5 步流程</a></li>
+      <li><a href="#p6">公开数据源清单</a></li>
+      <li><a href="#p7">待决策的 3 个问题</a></li>
+    </ol>
+  </div>
+
+  <h2 id="p1">一、这个项目在做什么</h2>
+
+  <p>我们正在为模型训练准备一套<strong>"基于证据的推理"</strong>训练数据。市面上现成的训练数据要么太简单（模型只会检索答案），要么太脱离专业场景（不懂临床、不懂金融）。我们的思路是：</p>
+
+  <div class="callout callout-blue">
+    <strong>拿公开权威的专业 benchmark 做骨架</strong>（HealthBench 临床、APEX 商业分析、Finance-Agent 金融披露），<strong>用真实公开数据源做证据</strong>（PubMed 文献、SEC 财报、NICE 指南等），<strong>用大模型把骨架实例化成具体题目</strong>。每道题都带着可验证的推理步骤和评分标准。
+  </div>
+
+  <h2 id="p2">二、数据来源：3 个公开 benchmark</h2>
+
+  <p>这三个 benchmark 都是公开、可查、有学术或工业背书的，我们用它们做骨架（不直接照搬原题，而是分析它们考察的能力维度）：</p>
+
+  <table>
+    <thead><tr><th>名称</th><th>领域</th><th>来源 / 出处</th><th>考察什么</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="badge badge-hb">HealthBench</span></td>
+        <td>临床医学</td>
+        <td>OpenAI / Arcadia Institute 公开评测集</td>
+        <td>患者咨询、医生回复、用药调整、危险信号识别、共享决策</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-apex">APEX</span></td>
+        <td>商业分析 / 咨询投行</td>
+        <td>公开商业建模评测集</td>
+        <td>DCF 估值、协同分析、商业尽调、法律风险评估</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-fin">Finance-Agent</span> v2</td>
+        <td>金融披露分析</td>
+        <td>公开 agent 评测集（v2 版本）</td>
+        <td>10-K/10-Q 解读、segment 分析、风险因子、契约合规</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>关键说明</strong>：我们<strong>不直接照搬</strong>这三个 benchmark 的原题，而是分析每道题考察的能力维度（比如"用药调整 + 多轮 + red-teaming"），归纳出 48 个任务族，再用大模型实例化成新的、风格一致但具体内容不同的题目。所以我们产出的数据<strong>风格对齐上游、内容完全自有、可商用</strong>。
+  </div>
+</div>
+
+<!-- ============ PAGE 2: 48 任务族 ============ -->
+<div class="page page-break">
+  <h2 id="p3">三、48 个任务族：我们对原 benchmark 的归纳</h2>
+
+  <p><strong>"任务族"是什么？</strong> 把同类任务的模式归纳出来就是一个族。比如 HealthBench 里有 100 多道不同的用药咨询题，它们考察的核心推理步骤是相似的（核对适应症 → 排查禁忌 → 评估药物相互作用 → 给出建议），归纳成"用药调整咨询"这一个任务族。</p>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="num">48</div><div class="lab">任务族总数</div></div>
+    <div class="kpi"><div class="num">19</div><div class="lab">HealthBench 临床族</div></div>
+    <div class="kpi"><div class="num">17</div><div class="lab">APEX 商业分析族</div></div>
+    <div class="kpi"><div class="num">12</div><div class="lab">Finance-Agent 金融族</div></div>
+  </div>
+
+  <h3>任务族示例（每族举 3 例）</h3>
+
+  <h4 style="color:#166534">HealthBench 临床类（19 族）</h4>
+  <table>
+    <thead><tr><th>族名</th><th>典型情景</th></tr></thead>
+    <tbody>
+      <tr><td>用药调整咨询</td><td>患者问能否把当前药物换成另一种</td></tr>
+      <tr><td>危险信号识别</td><td>患者描述症状，模型需判断是否需要立即就医</td></tr>
+      <tr><td>跨科室协作</td><td>专科医生咨询另一专科的用药合理性</td></tr>
+    </tbody>
+  </table>
+
+  <h4 style="color:#92400e">APEX 商业分析类（17 族）</h4>
+  <table>
+    <thead><tr><th>族名</th><th>典型情景</th></tr></thead>
+    <tbody>
+      <tr><td>DCF 估值</td><td>给一家公司做现金流折现估值</td></tr>
+      <tr><td>协同效应分析</td><td>并购案中估算收入/成本协同空间</td></tr>
+      <tr><td>法律风险评估</td><td>合同条款里识别对己方不利的风险点</td></tr>
+    </tbody>
+  </table>
+
+  <h4 style="color:#6b21a8">Finance-Agent 金融类（12 族）</h4>
+  <table>
+    <thead><tr><th>族名</th><th>典型情景</th></tr></thead>
+    <tbody>
+      <tr><td>分部业绩分析</td><td>从 10-K 解读各业务分部的收入与利润率</td></tr>
+      <tr><td>风险因子解读</td><td>对比多年 10-K 风险因子章节的变化</td></tr>
+      <tr><td>契约合规审查</td><td>判断公司是否满足债务契约条款</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-green">
+    <strong>每个任务族都有完整的"推理步骤骨架"</strong>：核心推理步骤、考察维度（多轮对话 / red-teaming / 证据适用性等）、条件任务（什么场景下需要额外做什么）。这是从原 benchmark 提炼出来的、可复用的核心资产。
+  </div>
+</div>
+
+<!-- ============ PAGE 3: 221 场景 ============ -->
+<div class="page page-break">
+  <h2 id="p4">四、221 个具体场景：任务族的实例化</h2>
+
+  <p><strong>"场景"是什么？</strong> 任务族是抽象的模式，场景是模式的一次具体实例化。同一个任务族，用不同的患者/客户/数据，可以变成多个不同的场景。</p>
+
+  <div class="callout callout-blue">
+    <strong>举例</strong>：「用药调整咨询」是一个<strong>任务族</strong>。在这个族下，"54 岁焦虑症患者问能否换药" 是一个<strong>场景</strong>，"高血压患者问能否停药" 是另一个<strong>场景</strong>。它们的推理骨架相同，但具体内容不同。
+  </div>
+
+  <h3>场景分布</h3>
+  <table>
+    <thead><tr><th>Benchmark</th><th>任务族</th><th>场景</th><th>平均每族</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-hb">HealthBench</span></td><td>19</td><td>115</td><td>6.0</td></tr>
+      <tr><td><span class="badge badge-apex">APEX</span></td><td>17</td><td>64</td><td>3.8</td></tr>
+      <tr><td><span class="badge badge-fin">Finance-Agent</span></td><td>12</td><td>42</td><td>3.5</td></tr>
+      <tr><td><strong>合计</strong></td><td><strong>48</strong></td><td><strong>221</strong></td><td><strong>4.6</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>一个完整场景长什么样（HealthBench 示例）</h3>
+
+  <div class="example">
+    <div class="label">用户问题（第一人称口语）</div>
+    <div class="quote">"我今年 54 岁，最近 6 个月一直在吃 escitalopram 20mg 治焦虑，最近失眠严重，上周自己减半了。我想长期换成 hydroxyzine，可以吗？"</div>
+
+    <div class="label">参考答案（开头）</div>
+    <div class="quote">"直接长期换用 hydroxyzine 不是最优方案。SSRI 类（如 escitalopram）突然减半可能引起停药反应，hydroxyzine 长期使用也有其限制。我建议先和你目前的主治医生沟通，分两步处理：第一，恢复 escitalopram 原剂量或更换为半衰期更长的同类药；第二，针对失眠本身做单独评估..."</div>
+
+    <div class="label">评分标准（共 3 项）</div>
+    <ul class="tight">
+      <li>① 提到 SSRI 突然减量会引发停药反应（权重 +2）</li>
+      <li>② 建议恢复原剂量或换半衰期更长药物（权重 +2）</li>
+      <li>③ 反对"直接长期换 hydroxyzine"作为单一方案（权重 -3，陷阱项）</li>
+    </ul>
+  </div>
+
+  <div class="callout callout-green">
+    <strong>每个场景都包含</strong>：1 道题 + 1 个参考答案 + 2-3 个评分项 + （可选）多轮对话历史。
+  </div>
+</div>
+
+<!-- ============ PAGE 4: 5 步流程 ============ -->
+<div class="page page-break">
+  <h2 id="p5">五、数据怎么造出来：5 步流程</h2>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="n">1</div>
+      <div class="t">取骨架</div>
+      <div>从 48 任务族中取一个，拿到推理步骤 + 考察维度</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="n">2</div>
+      <div class="t">挖材料</div>
+      <div>按场景类型，去对应公开数据源挖真实材料（如 PubMed 文献、SEC 财报）</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="n">3</div>
+      <div class="t">造实例</div>
+      <div>大模型把骨架实例化成具体情景（具体患者/客户/数据）</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="n">4</div>
+      <div class="t">出题目</div>
+      <div>大模型生成题目 + 参考答案 + 评分项</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="n">5</div>
+      <div class="t">组装</div>
+      <div>拼成训练样本（含多轮对话 / 附件材料）</div>
+    </div>
+  </div>
+
+  <h3>逐步详解</h3>
+
+  <h4>第 1 步：取骨架</h4>
+  <p>从我们已经做好的 48 任务族库里取一个。每个任务族带着<strong>核心推理步骤</strong>（如"用药调整咨询"族的 5 步：核对适应症 → 排查禁忌 → 评估相互作用 → 给出建议 → 提示监测）和<strong>考察维度</strong>（如多轮对话、red-teaming）。</p>
+
+  <h4>第 2 步：挖材料</h4>
+  <p>按场景类型去对应的<strong>公开数据源</strong>挖真实材料作为依据：</p>
+  <ul class="tight">
+    <li>临床场景 → 从 PubMed 拿文献摘要、从 NICE 拿英国临床指南、从 PMC 拿全文</li>
+    <li>商业场景 → 从 SEC EDGAR 拿真实公司财报（XBRL 结构化数据）</li>
+    <li>金融场景 → 从 SEC 10-K/10-Q、美国法院判例库拿材料</li>
+  </ul>
+
+  <h4>第 3 步：造实例</h4>
+  <p>大模型（MiniMax-M3）读取骨架 + 挖到的真实材料，生成<strong>一个具体情景</strong>：具体的患者/客户、具体的数值、具体的对话背景。比如把"用药调整咨询"族 + 一段 escitalopram 文献，实例化成"54 岁焦虑症患者问换药"这个场景。</p>
+
+  <h4>第 4 步：出题目</h4>
+  <p>大模型读取实例，生成<strong>题目 + 参考答案 + 评分项</strong>。每个评分项有明确的检查规则（数值容差、关键词匹配、陷阱检测）。</p>
+
+  <h4>第 5 步：组装</h4>
+  <p>把题目、参考答案、（可选的）多轮对话历史、（可选的）附件材料组装成训练样本。最终产物：<strong>sft_samples.jsonl</strong>，可以直接用于模型微调。</p>
+</div>
+
+<!-- ============ PAGE 5: 数据源清单 ============ -->
+<div class="page page-break">
+  <h2 id="p6">六、公开数据源清单</h2>
+
+  <p>所有材料都来自<strong>公开权威数据源</strong>，可商用、可追溯。按领域分：</p>
+
+  <h3 style="color:#166534">临床医学类（6 个）— 用于 HealthBench 场景</h3>
+  <table>
+    <thead><tr><th>数据源</th><th>是什么</th><th>本项目中用了多少场景</th></tr></thead>
+    <tbody>
+      <tr><td>PubMed</td><td>美国国立医学图书馆文献摘要库（3500 万+ 摘要）</td><td>45 场景</td></tr>
+      <tr><td>NICE Guidelines</td><td>英国国家卫生与临床优化研究所的临床指南</td><td>43 场景</td></tr>
+      <tr><td>PMC Open Access</td><td>PubMed Central 全文开放获取库</td><td>32 场景</td></tr>
+      <tr><td>CDC Guidelines</td><td>美国疾控中心指南（疫苗/流行病学）</td><td>（已接入，暂未使用）</td></tr>
+      <tr><td>DailyMed</td><td>美国 FDA 药品说明书结构化标签库</td><td>（已接入，暂未使用）</td></tr>
+      <tr><td>Preprint Servers</td><td>medRxiv / bioRxiv 预印本</td><td>3 场景</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="color:#92400e">金融与法律类（6 个）— 用于 APEX / Finance-Agent 场景</h3>
+  <table>
+    <thead><tr><th>数据源</th><th>是什么</th><th>本项目中用了多少场景</th></tr></thead>
+    <tbody>
+      <tr><td>SEC EDGAR (XBRL)</td><td>美国证监会财报库，结构化财务数据</td><td>69 场景</td></tr>
+      <tr><td>US Courts Case Law</td><td>美国联邦法院判例库（bulk 数据）</td><td>19 场景</td></tr>
+      <tr><td>Census Methodology</td><td>美国人口普查局方法论手册</td><td>（已接入，暂未使用）</td></tr>
+      <tr><td>Treasury TFM / USSGL</td><td>美国财政部财务管理手册 / 统一标准总账</td><td>（已接入，暂未使用）</td></tr>
+      <tr><td>USSC Guidelines</td><td>美国量刑委员会指南</td><td>（已接入，暂未使用）</td></tr>
+      <tr><td>GAO Reports</td><td>美国政府问责办公室审计报告</td><td>（已接入，暂未使用）</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="color:#6b21a8">法规披露类（2 个）— 用于 Finance-Agent 场景</h3>
+  <table>
+    <thead><tr><th>数据源</th><th>是什么</th></tr></thead>
+    <tbody>
+      <tr><td>GovInfo CFR / FR</td><td>美国联邦法规汇编 (CFR) 与联邦纪事 (Federal Register)</td></tr>
+      <tr><td>US Courts Case Law</td><td>（与上重复，跨类共用）</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="color:#991b1b">合成材料（补充）</h3>
+  <p>对于<strong>不需要外部依据</strong>的场景（如纯临床知识题、商业虚构案例），由大模型按骨架生成"合成材料"。<strong>40 个场景</strong>用了这种方式，主要在 HealthBench 临床知识题和部分 APEX 虚构商业案例上。</p>
+
+  <div class="callout callout-green">
+    <strong>接入统计</strong>：221 个场景中，<strong>154 个（70%）</strong>用真实公开数据源，<strong>57 个（30%）</strong>用合成材料（合理设计，因为部分场景本来就不需要外部依据）。
+  </div>
+</div>
+
+<!-- ============ PAGE 6: 待决策 3 问 ============ -->
+<div class="page">
+  <h2 id="p7">七、待决策的 3 个问题</h2>
+
+  <p>当前 221 道题已端到端跑通，进一步推进前需要先对齐 3 个方向性问题：</p>
+
+  <div class="q-card">
+    <span class="qn">1</span>
+    <span class="qt">造多少数据合适？</span>
+    <p style="margin-top:12px; margin-bottom:0;">当前 221 道。扩量目标量级（1k / 3k / 5k+）需要先对齐，决定后续是优先做"同任务族多实例化"还是"扩任务族"。</p>
+  </div>
+
+  <div class="q-card">
+    <span class="qn">2</span>
+    <span class="qt">48 个任务族是否可行？</span>
+    <p style="margin-top:12px; margin-bottom:0;">这 48 个族是从 HealthBench / APEX / Finance-Agent v2 三个原 benchmark 归纳得来的，需要决策两件事：</p>
+    <ul class="tight" style="margin-top:8px; margin-bottom:0;">
+      <li><strong>来源合理性</strong>：这样的归纳过程能不能站得住脚，48 个族是否真的能从原 benchmark 推导出来，归纳方法是否系统、可复现</li>
+      <li><strong>数据泄漏风险</strong>：用从原 benchmark 归纳的骨架去生成新题目，新题目会不会跟原 benchmark 太像，导致模型在原 benchmark 评测时分数虚高</li>
+    </ul>
+  </div>
+
+  <div class="q-card">
+    <span class="qn">3</span>
+    <span class="qt">Finance-Agent v2 数据怎么造？</span>
+    <p style="margin-top:12px; margin-bottom:0;">Finance-Agent v2 上游是 agent benchmark，原题带工具调用链（tool call trace）。我们的生成方案要不要模拟这层 agent 风格，需要决策。</p>
+  </div>
+
+  <div class="footer">训练数据合成项目汇报 · 2026-08-07 · 共 6 页</div>
+</div>
+
+</body>
+</html>
