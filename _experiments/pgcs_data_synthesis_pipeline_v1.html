@@ -1,0 +1,1048 @@
+<!-- index: PGCS 数据合成全链路 | 2026-08-25 | 从权威 Source 采集、证据冻结、Seed 召回、多文档组包、题目生成、SQ/WF 审核到反馈闭环的交互式技术文档 -->
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PGCS 数据合成全链路 · 总览</title><style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f5; --bg-card:#ffffff; --bg-soft:#f4f1ea; --bg-warm:#fffbeb;
+  --ink:#1f2937; --ink-soft:#4b5563; --ink-faint:#6b7280;
+  --border:#e5e7eb; --border-warm:#fde68a;
+  --hero-a:#1e3a5f; --hero-b:#2c5282;
+  --source:#1e3a8a; --source-soft:#dbeafe;
+  --gen:#c2410c;    --gen-soft:#ffedd5;
+  --train:#15803d;  --train-soft:#dcfce7;
+  --seed:#7e22ce;   --seed-soft:#ede9fe;
+  --fail:#b91c1c;   --fail-soft:#fee2e2;
+  --src-2009:#0e7490; --src-2010:#b45309; --src-2011:#be185d; --src-2013:#4338ca;
+  --radius:12px; --radius-sm:8px;
+}
+html{scroll-behavior:smooth;scroll-padding-top:18px}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",serif;
+  background:var(--bg);color:var(--ink);line-height:1.8;font-size:16px;
+}
+a{color:var(--hero-b);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--hero-b)}
+code,pre,.mono{font-family:"SF Mono","Cascadia Code",Menlo,Consolas,monospace}
+code{background:var(--bg-soft);padding:1px 6px;border-radius:4px;font-size:.92em;color:#9a3412}
+pre{background:#0f172a;color:#e2e8f0;padding:14px 18px;border-radius:var(--radius-sm);overflow-x:auto;font-size:13px;line-height:1.55;margin:10px 0}
+pre code{background:none;color:inherit;padding:0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--bg-soft);font-weight:600;color:var(--ink-soft)}
+hr{border:0;border-top:1px solid var(--border);margin:28px 0}
+
+/* ===== layout ===== */
+.wrap{max-width:1180px;margin:0 auto;padding:24px 28px 80px}
+
+.hero{
+  background:linear-gradient(135deg,var(--hero-a),var(--hero-b));
+  color:#fff;padding:44px 36px;border-radius:18px;margin-bottom:32px;
+  box-shadow:0 8px 28px rgba(30,58,95,.18);
+}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:12px;letter-spacing:-.4px;line-height:1.35}
+.hero .sub{font-size:16px;opacity:.92;max-width:920px;margin-bottom:24px;line-height:1.7}
+.hero .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.hero .kpi{
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);
+  padding:14px 12px;border-radius:10px;text-align:center;
+}
+.hero .kpi .big{font-size:24px;font-weight:700;display:block;margin-bottom:4px;line-height:1.15}
+.hero .kpi .lbl{font-size:11.5px;opacity:.88;line-height:1.4}
+.snap-tip{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
+  padding:8px 14px;border-radius:8px;font-size:13px;
+  display:inline-flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
+.snap-tip .badge{background:#fff;color:#1e3a5f;border-radius:6px;padding:2px 8px;font-weight:700;font-size:11.5px}
+
+.layout{display:grid;grid-template-columns:240px 1fr;gap:32px;align-items:start}
+.sidebar{
+  position:sticky;top:18px;max-height:calc(100vh - 36px);overflow-y:auto;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 12px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(15,23,42,.06);font-size:13.5px;
+}
+.sidebar h4{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);margin:10px 6px 6px}
+.sidebar ul{list-style:none}
+.sidebar li{margin:1px 0}
+.sidebar a{display:block;color:var(--ink-soft);padding:5px 8px;border-radius:6px;border-bottom:none;line-height:1.4}
+.sidebar a:hover{background:var(--bg-soft);color:var(--ink)}
+.sidebar a.active{background:#dbeafe;color:#1e3a8a;font-weight:600}
+.nav-toggle{
+  display:none;position:fixed;top:14px;right:14px;z-index:30;
+  background:var(--hero-a);color:#fff;border:0;border-radius:8px;
+  padding:9px 12px;font-size:13px;cursor:pointer;
+}
+
+/* ===== sections ===== */
+section{padding:44px 0 0;margin-top:-12px}
+section:first-of-type{padding-top:8px}
+section h2{
+  font-size:24px;font-weight:700;color:var(--ink);
+  margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid var(--border);
+}
+section h2 .step-num{
+  display:inline-block;background:var(--hero-b);color:#fff;
+  border-radius:6px;padding:2px 8px;font-size:14px;margin-right:8px;vertical-align:middle;
+}
+section .lead{color:var(--ink-soft);font-size:15.5px;margin-bottom:18px;max-width:900px}
+
+.card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(15,23,42,.06);
+}
+.card.warm{background:var(--bg-warm);border-color:var(--border-warm)}
+.card.has-fail{border-left:4px solid var(--fail)}
+
+/* two-column stage layout: prose on left, case on right */
+.stage{
+  display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin:18px 0;
+}
+.stage .prose,.stage .casebox{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(15,23,42,.06);
+}
+.stage .prose h4,.stage .casebox h4{margin:14px 0 6px;font-size:13.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);font-weight:700}
+.stage .prose h4:first-child,.stage .casebox h4:first-child{margin-top:0}
+.stage .prose p{margin-bottom:10px;font-size:15px}
+.stage .prose ol,.stage .prose ul{padding-left:22px;margin:6px 0 10px}
+.stage .prose ol li,.stage .prose ul li{margin:3px 0;font-size:14.5px}
+.stage .casebox{background:#fffbeb;border-color:#fde68a}
+.stage .casebox .case-tag{display:inline-block;background:#854d0e;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-weight:600;margin-bottom:8px}
+.stage .casebox p{margin-bottom:8px;font-size:14px}
+.stage .casebox .num{font-family:monospace;color:#1f2937;font-size:12.5px}
+.fail-list{background:var(--fail-soft);border-radius:6px;padding:8px 12px;font-size:13px;color:#7f1d1d}
+.fail-list ul{padding-left:18px;margin:4px 0}
+
+/* data type badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;line-height:1.5}
+.badge.source{background:var(--source-soft);color:var(--source)}
+.badge.gen{background:var(--gen-soft);color:var(--gen)}
+.badge.train{background:var(--train-soft);color:var(--train)}
+.badge.seed{background:var(--seed-soft);color:var(--seed)}
+.badge.fail{background:var(--fail-soft);color:var(--fail)}
+.badge.ok{background:#dcfce7;color:#166534}
+.badge.warn{background:#fef3c7;color:#854d0e}
+.badge.bad{background:#fee2e2;color:#991b1b}
+.badge.infra{background:#f3e8ff;color:#6b21a8}
+.badge.contract{background:#1f2937;color:#fff}
+
+.src-2009{color:var(--src-2009);font-weight:600}
+.src-2010{color:var(--src-2010);font-weight:600}
+.src-2011{color:var(--src-2011);font-weight:600}
+.src-2013{color:var(--src-2013);font-weight:600}
+.src-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.dot-2009{background:var(--src-2009)}
+.dot-2010{background:var(--src-2010)}
+.dot-2011{background:var(--src-2011)}
+.dot-2013{background:var(--src-2013)}
+
+/* main flow diagram */
+.flow-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin:18px 0;box-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(15,23,42,.06);overflow-x:auto}
+.flow-svg{display:block;margin:0 auto;min-width:920px}
+.flow-svg text{font-family:inherit;fill:#1f2937}
+.flow-svg .nbox{fill:#fff;stroke:#94a3b8;stroke-width:1.2}
+.flow-svg .nsrc{fill:#dbeafe;stroke:#1e3a8a}
+.flow-svg .ngen{fill:#ffedd5;stroke:#c2410c}
+.flow-svg .ntra{fill:#dcfce7;stroke:#15803d}
+.flow-svg .nsee{fill:#ede9fe;stroke:#7e22ce}
+.flow-svg .nobs{fill:#f1f5f9;stroke:#475569}
+.flow-svg .edge{stroke:#475569;stroke-width:1.4;fill:none}
+.flow-svg .edge-d{stroke:#9333ea;stroke-width:1.2;fill:none;stroke-dasharray:5 3}
+
+/* ===== responsive ===== */
+@media (max-width:980px){
+  .layout{grid-template-columns:1fr;gap:0}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:280px;z-index:40;transform:translateX(-100%);transition:transform .25s ease;border-radius:0;max-height:100vh}
+  .sidebar.open{transform:translateX(0)}
+  .nav-toggle{display:block}
+  .hero h1{font-size:24px}
+  .hero .kpis{grid-template-columns:repeat(2,1fr)}
+  .stage{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .wrap{padding:18px 14px 60px}
+  .hero{padding:30px 18px;border-radius:14px}
+}
+
+.muted{color:var(--ink-faint)}
+.kw{font-weight:600;color:var(--ink)}
+
+details{padding:10px 14px;background:var(--bg-soft);border-radius:var(--radius-sm);margin:8px 0;font-size:13.5px}
+details summary{cursor:pointer;font-weight:600;color:var(--ink-soft);user-select:none}
+details[open] summary{margin-bottom:8px}
+.checklist{list-style:none;padding:0}
+.checklist li{padding:4px 0 4px 26px;position:relative;font-size:14px}
+.checklist li::before{content:"☑";position:absolute;left:4px;top:4px;color:var(--ok);font-size:13px}
+
+/* technical implementation layer */
+.principle-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:14px 0}
+.principle{background:#fff;border:1px solid var(--border);border-left:4px solid var(--hero-b);border-radius:10px;padding:14px 16px}
+.principle h3{font-size:15px;margin-bottom:5px}
+.principle p{font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+.tech-panel{background:#f8fafc;border:1px solid #cbd5e1;padding:0;margin:12px 0 22px}
+.tech-panel summary{padding:12px 15px;color:#1e3a5f;font-size:14px}
+.tech-panel[open] summary{border-bottom:1px solid #cbd5e1;margin-bottom:0}
+.tech-body{padding:14px 16px}
+.tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.tech-cell{background:#fff;border:1px solid var(--border);border-radius:8px;padding:11px 12px}
+.tech-cell h4{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);margin:0 0 5px}
+.tech-cell p,.tech-cell li{font-size:13px;line-height:1.55}
+.tech-cell ul,.tech-cell ol{padding-left:18px}
+.invariant{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 12px;margin:9px 0;color:#1e3a5f;font-size:13px}
+.case-trace{counter-reset:trace;display:grid;gap:12px;margin-top:16px}
+.trace-step{position:relative;background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px 16px 62px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.trace-step::before{counter-increment:trace;content:counter(trace);position:absolute;left:18px;top:16px;width:30px;height:30px;border-radius:50%;background:var(--hero-b);color:#fff;display:grid;place-items:center;font-weight:700}
+.trace-step h3{font-size:16px;margin:0 0 6px}
+.trace-step p,.trace-step li{font-size:14px}
+.trace-step ul,.trace-step ol{padding-left:20px}
+.trace-io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.trace-io>div{background:var(--bg-soft);border-radius:8px;padding:10px 12px;font-size:13px}
+.trace-io b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);margin-bottom:3px}
+.fact-chain{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.fact-chain>div{border-radius:8px;padding:9px 10px;background:#fff;border:1px solid var(--border);font-size:12.5px}
+.question-box{background:#fff7ed;border-left:4px solid var(--gen);padding:13px 15px;border-radius:8px;margin:10px 0;font-size:14px}
+.answer-box{background:#f0fdf4;border-left:4px solid var(--train);padding:13px 15px;border-radius:8px;margin:10px 0;font-size:14px}
+.path{overflow-wrap:anywhere;word-break:break-word}
+.nowrap{white-space:nowrap}
+@media (max-width:980px){
+  .principle-grid,.tech-grid{grid-template-columns:1fr}
+  .fact-chain{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:560px){
+  .trace-io,.fact-chain{grid-template-columns:1fr}
+  .trace-step{padding-left:52px}
+  .trace-step::before{left:12px}
+}
+
+/* ===== multi-page course shell ===== */
+.site-nav-wrap{position:sticky;top:0;z-index:50;background:rgba(250,249,245,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.site-nav{max-width:1120px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:8px;overflow-x:auto}
+.site-brand{font-weight:800;color:var(--hero-a);margin-right:auto;white-space:nowrap;border:0}
+.site-nav .nav-link{white-space:nowrap;padding:7px 11px;border-radius:8px;color:var(--ink-soft);border:0;font-size:13px}
+.site-nav .nav-link:hover{background:var(--bg-soft);border:0}
+.site-nav .nav-link.active{background:var(--hero-a);color:#fff}
+.page-shell{max-width:1080px;margin:0 auto;padding:34px 28px 80px}
+.page-head{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px 30px;margin-bottom:22px;box-shadow:0 3px 18px rgba(15,23,42,.06)}
+.page-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--hero-b);font-weight:800;margin-bottom:5px}
+.page-head h1{font-size:28px;line-height:1.35;margin-bottom:8px}
+.page-head p{color:var(--ink-soft);max-width:850px}
+.mainline{margin-top:15px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;color:#1e3a5f;font-size:14px}
+.local-toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.local-toc a{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:var(--bg);font-size:12.5px;color:var(--ink-soft)}
+.route-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0 8px}
+.route-card{display:block;background:#fff;border:1px solid var(--border);border-radius:14px;padding:19px 20px;color:var(--ink);box-shadow:0 2px 12px rgba(15,23,42,.05);transition:transform .15s ease,box-shadow .15s ease}
+.route-card:hover{border-bottom:1px solid var(--border);transform:translateY(-2px);box-shadow:0 7px 22px rgba(15,23,42,.09)}
+.route-card .route-no{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--hero-b);font-weight:800}
+.route-card h3{font-size:18px;margin:4px 0 5px}
+.route-card p{font-size:13.5px;color:var(--ink-soft)}
+.route-card .route-arrow{display:inline-block;margin-top:9px;color:var(--hero-b);font-weight:700;font-size:13px}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:34px;padding-top:20px;border-top:1px solid var(--border)}
+.pager a{display:block;background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--ink);font-size:13px}
+.pager a:last-child{text-align:right}
+.pager small{display:block;color:var(--ink-faint)}
+.page-shell section{padding-top:34px}
+.page-shell .tech-panel summary::after{content:"展开技术设计";float:right;color:var(--ink-faint);font-size:11px;font-weight:500}
+.page-shell .tech-panel[open] summary::after{content:"收起技术设计"}
+@media(max-width:760px){
+  .site-nav{padding:9px 12px}.site-brand{display:none}.page-shell{padding:22px 14px 56px}
+  .page-head{padding:22px 18px}.page-head h1{font-size:23px}.route-grid,.pager{grid-template-columns:1fr}
+  .pager a:last-child{text-align:left}.hero .kpis{grid-template-columns:repeat(2,1fr)}
+}
+
+.subpage[hidden]{display:none}
+.subpage{animation:pageIn .18s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+</style></head><body>
+<div class="site-nav-wrap"><nav class="site-nav" aria-label="数据合成子页"><a class="site-brand" href="#overview" data-page-link="overview">PGCS 数据合成</a><a class="nav-link" href="#overview" data-page-link="overview">总览</a><a class="nav-link" href="#source" data-page-link="source">Source 处理</a><a class="nav-link" href="#generation" data-page-link="generation">组包与出题</a><a class="nav-link" href="#quality" data-page-link="quality">质检与反馈</a><a class="nav-link" href="#case" data-page-link="case">真实案例</a></nav></div>
+<main class="page-shell">
+<div class="subpage" id="overview" data-page="overview"><header class="hero">
+    <h1>从一张真实的政府页面，到 AI 训练里的一道题,这条数据链是怎么走完的</h1>
+    <p class="sub">
+      这页讲一套把"政府/医学/财经"网站变成 AI 训练样本的系统。它先去真实站点把页面下载下来,
+      抽取带原文坐标的事实;再到一份 100 页的批次里挑出合适的页面;
+      然后,根据已有的"工作方案",用一页或几页拼出一道题,把题写进训练对话格式;
+      最后做两遍审核,合格的进题库、优秀的方案再回收让下一批复用。
+      贯穿案例会把四张真实 Source 怎样变成一道训练题逐字段展开。
+    </p>
+    <div class="kpis">
+      <div class="kpi" title="2026-08-24 snapshot">
+        <span class="big">1,998</span>
+        <span class="lbl">已收的 Source 页面<br>（跨多个批次去重后）</span>
+      </div>
+      <div class="kpi" title="2026-08-24 snapshot">
+        <span class="big">3,069</span>
+        <span class="lbl">统一验收后的训练样本<br>（legacy + M7/M8）</span>
+      </div>
+      <div class="kpi" title="2026-08-24 snapshot">
+        <span class="big">3,046</span>
+        <span class="lbl">默认短上下文可直接训练<br>（2,759 train / 287 val）</span>
+      </div>
+      <div class="kpi" title="2026-08-24 snapshot">
+        <span class="big">256</span>
+        <span class="lbl">已沉淀的工作方案<br>（164 candidate / 92 active）</span>
+      </div>
+    </div>
+    <div class="snap-tip">
+      <span class="badge">2026-08-24 snapshot</span>
+      <span><strong>Source、训练样本、Seed 是不同对象；这些数字只说明当前系统规模，不参与下面案例的事实推导。</strong></span>
+    </div>
+  </header>
+<section id="routes">
+  <h2>按子页阅读，不必一次看完整条长链</h2>
+  <p class="lead">每个子页只回答一组紧密相关的问题。建议按 1 → 4 阅读，也可以直接进入真实案例。</p>
+  <div class="route-grid">
+    <a class="route-card" href="#source"><span class="route-no">Part 1 · Stages 1–4</span><h3>Source 处理</h3><p>资源怎样枚举、正文怎样冻结、事实怎样获得原文坐标，以及历史/lineage 去重怎样形成 100-card Unit。</p><span class="route-arrow">进入 Source 处理 →</span></a>
+    <a class="route-card" href="#generation"><span class="route-no">Part 2 · Stages 5–7</span><h3>组包、Seed 召回与出题</h3><p>单/多文档怎样分叉，四轴 BM25/RRF、family cap 和 H=4 怎样工作，以及 TaskSignature 怎样生成。</p><span class="route-arrow">进入组包与出题 →</span></a>
+    <a class="route-card" href="#quality"><span class="route-no">Part 3 · Stages 8–12</span><h3>训练物化、审核与反馈闭环</h3><p>模型最终看到哪些 messages、SQ/WF 为什么分开，以及 Registry、Checkpoint、Promotion、Fold 怎样闭环。</p><span class="route-arrow">进入质检与反馈 →</span></a>
+    <a class="route-card" href="#case"><span class="route-no">Part 4 · Real Case</span><h3>pkg_2c59b53ba2d0 真实案例</h3><p>沿着四张 Census Source，逐字段追到 Package、16 facts、4 edits、6 windows、审核结论和 strict train sample。</p><span class="route-arrow">进入真实案例 →</span></a>
+  </div>
+</section>
+<section id="sec-00">
+  <h2><span class="step-num">0</span>这套系统到底在解决什么问题</h2>
+  <p class="lead">核心不是“让模型批量写题”，而是同时压住模型幻觉，并把题目从固定模板扩展成有证据、有变化的任务空间。</p>
+  <div class="card">
+    <h3>问题一：模型幻觉——答案看起来合理，但没有可靠来源</h3>
+    <p>最容易看见的是数字幻觉，例如模型凭印象写出“美国 2010 年某州人口比例”。但 Source 要约束的不只是数字，还包括定义、规则、适用范围、例外、方法、时间口径和跨文档关系。任何会改变答案的关键主张，都应该能回到模型实际看见的原文。</p>
+    <p>因此 Source 既是<strong>证据边界</strong>，也是<strong>任务边界</strong>：它不仅证明答案对不对，还决定这份材料究竟支持比较、计算、规则应用、决策还是只支持摘要。</p>
+
+    <h3>问题二：固定模板——题目数量增加了，任务空间却没有扩大</h3>
+    <p>如果所有题都套“先做 A、再做 B”的固定文本模板，表面上有很多题，实际只是在换名词。模型学到的是模板复读，而不是面对不同材料时选择操作、补齐条件、组合证据和改变交付物。</p>
+    <p>系统因此把 <strong>Seed（怎么完成一类任务）</strong> 与 <strong>TaskSignature（这一次具体出了什么题）</strong> 分开。Seed 提供可复用工作流；Source Card 和 Source Package 提供不同事实形状；Selector、stable/mutated/source-native 三种生成角色以及多文档操作共同扩展任务多样性。</p>
+    <div class="principle-grid">
+      <div class="principle"><h3>内容空间</h3><p>医学、政府、法律和财经 Source 带来不同实体、规则、数值、时间和证据形状。</p></div>
+      <div class="principle"><h3>操作空间</h3><p>题目可以计算、比较、判断、应用规则、制定计划或综合多份材料，而不是统一做摘要。</p></div>
+      <div class="principle"><h3>结构空间</h3><p>可以是单文档、多文档、stable、mutated、source-native，也可以真正触发 conditional work 或历史轮次。</p></div>
+      <div class="principle"><h3>交付物空间</h3><p>答案可以是比较表、计算过程、决策路径、风险计划或证据综合；交付物由 Seed 合同和 Source 能力共同约束。</p></div>
+    </div>
+
+    <h3>系统对应做了三件事</h3>
+    <ol>
+      <li><strong>让每个承载答案的关键主张可追溯。</strong>数字、规则、范围、例外和方法都要落到 worker-visible Source；事实保存字符坐标与哈希，可以从冻结正文重新切片核验。</li>
+      <li><strong>把工作流和具体题分开。</strong>同一 Seed 可以在新 Source 上稳定复用，也可以在事实支持下做 1–4 个可重放修改；没有合适 Seed 时还能走 source-native，而不是硬套模板。</li>
+      <li><strong>审核最终训练对话，而不是内部自证。</strong>Auditor 只判断训练时模型真正看到的 messages。内部 JSON 即使有证据，只要没有进入可见附件，也不能替训练样本补洞。</li>
+    </ol>
+  </div>
+</section>
+<section id="tech-map">
+  <h2><span class="step-num">T</span>先看懂八条技术不变量，再读十二个阶段</h2>
+  <p class="lead">这不是十二个彼此独立的脚本，而是一条连续的数据合同。下面八条不变量决定了每一阶段为什么存在，也解释了系统为何遇到缺数据时宁可硬停。</p>
+  <div class="principle-grid">
+    <div class="principle"><h3>1. 内容身份与资源身份分开</h3><p>URL、resource id、card id、normalized SHA 和 document lineage 分别解决“来自哪里”“是不是同一资源”“正文是否相同”“是不是整文档的切片”等不同问题，不能只靠一个 URL 去重。</p></div>
+    <div class="principle"><h3>2. 证据先于题目</h3><p>Generator 不能自由引用正文中的任意数字。只有先进入 <code>key_facts</code>、拥有 <code>char_range</code> 和 excerpt SHA 的事实，才能成为题目锚点。</p></div>
+    <div class="principle"><h3>3. 多文档是一个图问题</h3><p>先建立实体、时期、版本、显式引用和语义关系边，再从图中构造 2–4 Source package；同 URL 或文本相似都不足以证明多文档必要性。</p></div>
+    <div class="principle"><h3>4. Seed 召回和最终选择分层</h3><p>机械四轴检索负责高召回，family de-crowding 和 usage decay 控制拥挤，LLM Selector 只在固定候选池里判断 MAIN/AUX 与 exact/needs_edits。</p></div>
+    <div class="principle"><h3>5. Mutation 是可执行编辑脚本</h3><p><code>modify_step/add_step/delete_step/reorder/combine</code> 不是自然语言备注。程序重新执行 edit script 计算 canonical workflow，并检查每次编辑都有合法 fact 支撑。</p></div>
+    <div class="principle"><h3>6. 审核只看 worker-visible messages</h3><p>先用冻结正文把 attachments、历史轮次、最终问题和 gold 物化成训练对话，再审核这份精确输入；内部元数据不能替代模型真正看到的证据。</p></div>
+    <div class="principle"><h3>7. SQ 与 WF 管不同对象</h3><p>Sample Quality 决定题能否训练；Workflow Fidelity 决定 Seed 是否得到一次独立验证。Stable 必须两轴都过，mutated 的 WF 按角色固定为 null。</p></div>
+    <div class="principle"><h3>8. 所有反馈写入必须幂等</h3><p>Registry 原子覆盖、checkpoint ledger、promotion pool 和 cumulative fold 都有稳定键和 before/after SHA，保证 crash/resume 或重跑不会复制题目和 Seed。</p></div>
+  </div>
+</section>
+<section id="sec-01">
+  <h2><span class="step-num">1</span>贯穿案例,后面每一节都会回来点名</h2>
+  <p class="lead">我们用一份真实的多页案例贯穿这条链。先看一眼它长什么样；十二阶段里会持续点名，阶段说明之后还有一节逐字段深挖。</p>
+  <div class="card warm">
+    <p>
+      <strong>案例:</strong><code>pkg_2c59b53ba2d0</code>。它由四份 <span class="badge source">美国社区调查(ACS)三年期人口概况</span> 页面拼成,
+      年份分别是 <span class="src-2009"><span class="src-dot dot-2009"></span>2009</span> /
+      <span class="src-2010"><span class="src-dot dot-2010"></span>2010</span> /
+      <span class="src-2011"><span class="src-dot dot-2011"></span>2011</span> /
+      <span class="src-2013"><span class="src-dot dot-2013"></span>2013</span>。
+      比较对象是 <strong>夏威夷、密西西比、波多黎各</strong> 这三个地区,在每个年份里某个指标的最大/最小关系。
+    </p>
+    <p>
+      这道题最终分类 <span class="badge ok">合格</span>,归在 <span class="badge train">FIN</span> 任务路由下,
+      但它的来源并不是 SEC——而是 Census 政府数据。后面每一节,我们就看它在那一节里"长成什么样子"。
+    </p>
+  </div>
+</section>
+<nav class="pager"><span></span><a href="#source"><small>开始阅读</small>Part 1 · Source 处理</a></nav></div>
+<div class="subpage" id="source" data-page="source" hidden><header class="page-head"><div class="page-kicker">Part 1 · Stages 1–4</div><h1>从权威资源到可重放的 Source Card</h1><p>这一页只讲 Source 如何被发现、下载、冻结、抽成事实，并在去重后进入一个 100-card Unit。</p><div class="mainline"><strong>主线：</strong>资源枚举 → 正文规范化与冻结 → Key Facts + Evidence Spans → 历史/lineage/内部去重 → 100-card Unit。</div><nav class="local-toc"><a href="#s1">① 资源枚举</a><a href="#s2">② 冻结正文</a><a href="#s3">③ 事实与坐标</a><a href="#s4">④ 去重与 Unit</a></nav></header>
+<section id="s1">
+  <h2><span class="step-num">①</span>去哪些网站,把候选页面找出来</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>这一节在做什么</h4>
+      <p>每一批生产开始时,先去"权威站点"的索引页把候选页面枚举出来。我们不会让模型去搜索,因为那样说不清"是不是漏了几页""是不是抓了两遍同一页""昨天抓的和今天是不是同一份"。</p>
+      <h4>覆盖的站点(10 类)</h4>
+      <ul>
+        <li><strong>临床/医学:</strong> clinicaltrials.gov / PubMed / OpenFDA / DailyMed / PMC</li>
+        <li><strong>政府/法律:</strong> govinfo 的 CFR & FR / USSC 量刑指南</li>
+        <li><strong>政府数据:</strong> Census ACS(本案来源)</li>
+        <li><strong>财经:</strong> SEC EDGAR XBRL / Treasury TFM / USSGL</li>
+      </ul>
+      <p>10 类不代表每次都会均匀出现——历史去重、站点供给、API 权限都会让某些类当批为 0。</p>
+      <h4>枚举结果长这样</h4>
+      <p>每个候选项就是一条"任务",带一个稳定的编号: <code>inv:&lt;通道名&gt;:&lt;资源编号&gt;</code>。编号是稳定的,这样进程崩了也能恢复,不会"靠记忆"决定下一步要做什么。</p>
+      <p>编号会进入 manifest(之后的去重索引);不会出现的敏感字段(比如 API key)在落盘前会被替换成 <code>REDACTED</code>。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">pkg_2c59b53ba2d0 由四个独立任务开始</h4>
+      <p><span class="src-2009"><span class="src-dot dot-2009"></span>2009 年 ACS</span> → 任务编号 <code>inv:census_method_data:acs/acs3/spp|data_query|2009</code></p>
+      <p><span class="src-2010"><span class="src-dot dot-2010"></span>2010 年 ACS</span> → 同一个通道,只有 vintage 这一个字段不同,任务编号也相应换成 <code>|data_query|2010</code>。</p>
+      <p><span class="src-2011"><span class="src-dot dot-2011"></span>2011</span> 和 <span class="src-2013"><span class="src-dot dot-2013"></span>2013</span> 同理。四年之所以是"四份不同任务",靠的就是这个 vintage 字段把任务编号切开了。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：Collection Task 如何获得稳定身份</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>Input</h4><p>通道 adapter、分页游标、历史 inventory，以及由数据集、查询变量、地域和 vintage 组成的 external id。</p></div>
+        <div class="tech-cell"><h4>Algorithm</h4><p>Adapter 机械枚举资源；driver 将 <code>(channel_id, resource_id)</code> 编成 <code>inv:&lt;channel&gt;:&lt;resource&gt;</code>，每个 task 在 state ledger 中只允许一个 terminal fate。</p></div>
+        <div class="tech-cell"><h4>Output / Gate</h4><p>输出可恢复的 Collection Task，而非 Source Card。分页只有 adapter 明确返回 exhausted 才算穷尽；密钥字段在持久化前统一 redaction。</p></div>
+      </div>
+      <div class="invariant"><strong>不变量：</strong>枚举是确定性的资源发现，不由 LLM 决定“下一页去哪”或“哪个 URL 看起来值得抓”。这一阶段 LLM 调用数为 0。</div>
+    </div>
+  </details>
+</section>
+<section id="s2">
+  <h2><span class="step-num">②</span>下载并冻结正文</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>为什么要"冻结"</h4>
+      <p>官方页面会更新、会重定向、会下线。训练样本必须能在不重新联网的情况下 <strong>原样重放</strong>。所以一抓回来就同时存"原始字节"和"规范化后的纯文本",以规范化文本的 SHA-256 哈希作为这份正文的永久身份证。</p>
+      <h4>下载完会发生什么</h4>
+      <ol>
+        <li>下到原始字节;</li>
+        <li>解析成纯文本,丢掉导航、广告、页脚;</li>
+        <li>算规范化文本的哈希,先看这个哈希以前是否见过 — 见过就跳过,绝不再花钱抽事实;</li>
+        <li>按段落切成 chunk,准备给下一步用;</li>
+        <li>写入"正文冻结仓库"。同一份正文不管被哪个任务复用,只有第一次写入的人负责,后来的人直接用。</li>
+      </ol>
+      <h4>这一步踩过的坑</h4>
+      <div class="fail-list">
+        <strong>会卡住的几种情形:</strong>
+        <ul>
+          <li>下不动 / 超时 → 记成 "现场失败",不上算到正文;</li>
+          <li>规范化文本在历史里已经存在 → 标成 "重复,跳过",不进事实抽取;</li>
+          <li>同一资源遇到了两个解析器版本不同的输出 → 阻断,先对齐版本再说;</li>
+          <li>写入后算出的哈希和入档前不一致 → 不允许,这次下载作废,再来一次。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">四年 ACS 各拿到自己的正文哈希</h4>
+      <p><span class="src-2009"><span class="src-dot dot-2009"></span>2009</span> → 规范化正文哈希前缀 <code class="num">3784e6ec</code></p>
+      <p><span class="src-2010"><span class="src-dot dot-2010"></span>2010</span> → <code class="num">1f0be716</code></p>
+      <p><span class="src-2011"><span class="src-dot dot-2011"></span>2011</span> → <code class="num">a59758ef</code></p>
+      <p><span class="src-2013"><span class="src-dot dot-2013"></span>2013</span> → <code class="num">263eb274</code></p>
+      <p style="font-size:13px;color:#854d0e;margin-top:6px">四个 hash 不同,说明四份正文确实是不同的内容;但都用了同一份 ACS 三年期 S0201 表 schema,所以 schema 事实四个 hash 都能引用。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：为什么同一正文不会重复烧事实抽取预算</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>身份计算</h4><p>Fetch 结果先规范化，再计算 <code>normalized_sha256</code>。原始字节 SHA 用于下载审计，normalized SHA 才是正文内容身份。</p></div>
+        <div class="tech-cell"><h4>两层缓存门</h4><p>先查跨运行 HistoryIndex；再查按 parser version 隔离的 BodyCache。历史 SHA 命中会在 evidence extraction 前返回，RESUME 则交由 extraction cache 零调用恢复。</p></div>
+        <div class="tech-cell"><h4>冻结写入</h4><p>只有质量门通过才调用 <code>write_frozen</code>。写入时重新核对 SHA；同内容已有 first writer 可以复用，内容冲突则返回失败终态。</p></div>
+      </div>
+      <pre><code>fetch bytes → normalize text → normalized SHA
+           → history.sha_used?  → DUPLICATE_SKIPPED
+           → BodyCache.probe    → WRITE / RESUME / FAIL_CLOSED
+           → extraction cache   → 0 或 1 次 LLM
+           → quality pass       → write_frozen</code></pre>
+    </div>
+  </details>
+</section>
+<section id="s3">
+  <h2><span class="step-num">③</span>抽出带原文坐标的事实</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>为什么不让出题 AI 自由发挥</h4>
+      <p>正文往往几千字。让写题 AI 自己读、随意摘数字,会很容易"读个大概,编个细节"。所以多做一步——把正文里值得引用的句子预先抽成结构化 <strong>事实</strong>,每个事实都带两个关键东西:在原文里的字符起止位置,和这一段字符的哈希。</p>
+      <h4>这个"事实"长什么样</h4>
+      <p>一个事实最少包含:事实编号(如 <code>kf_004</code>)、事实类型(如"数值型指标")、陈述(如"夏威夷 S0201_002E 最低为 77.6")。再附加一个证据坐标:在第几段、字符 266 到 292、这段字符的哈希是什么。</p>
+      <p>这样做的好处:<strong>任何人后来怀疑"这个数字是不是编的",打开原文,把字符 266 到 292 切出来算一次哈希,应该和事实里写的哈希一致</strong>。不一致就说明事实不可信,题就不会被放行。</p>
+      <h4>抽完之后还有一道自动把关</h4>
+      <p>这道把关由程序跑、不花 AI:页面是否真的下下来了、是否有可引用的事实、是否像垃圾内容、主题是否真的相关。任一项不过,这张卡就直接被拒掉,不会进下一步。这是为了在流水线很早就把烂材料剔掉,不要让它们去烧后面的预算。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">2009 年那张卡的几个关键事实</h4>
+<pre><code>kf_000: schema = S0201_001E, S0201_002E, S0201_003E, state
+kf_003: Mississippi has highest S0201_002E = 99.0
+kf_004: Hawaii has lowest S0201_002E = 77.6
+        → 字符 266 ~ 292
+        → SHA-256 3b15b58808504b7483be8c466a243cc241b59b762b7c67f10623aeeac26bd3eb
+kf_005: Hawaii has highest S0201_003E = 14.9
+kf_006: Puerto Rico row is all null</code></pre>
+      <p>其他三年的卡,各自有自己的 <code>kf_004</code>(数字不同),但 schema 相同。</p>
+      <p style="font-size:13px;color:#854d0e;margin-top:6px">注意:<code>kf_006</code>("波多黎各这行全是 null")是一个"空值事实",后面出题时它就要成为"为什么要排除这一行"的来源。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：Fact statement 为什么不能脱离 Evidence Span</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>Input</h4><p><code>normalized_text</code> 被切成带绝对字符区间的 chunks；抽取 prompt 同时收到 topic、标题和 chunk 文本。</p></div>
+        <div class="tech-cell"><h4>Extraction contract</h4><p>每个 <code>key_fact.fact_id</code> 必须在 <code>evidence_spans</code> 中有对应项，span 记录 <code>chunk_id</code>、绝对 <code>char_range</code>、excerpt SHA 与 covered verdict。</p></div>
+        <div class="tech-cell"><h4>Quality gate</h4><p><code>fetched_ok ∧ has_grounded_facts ∧ not_junk ∧ topic_relevant</code> 才能进入 manifest。Inventory-first 路径以 groundedness 代替脆弱的标题词重合判断。</p></div>
+      </div>
+      <div class="invariant"><strong>证据重放公式：</strong><code>SHA256(normalized_text[start:end]) == evidence_span.excerpt_sha256</code>。Statement 对不对可以争论，字节是否对应不能含糊。</div>
+    </div>
+  </details>
+</section>
+<section id="s4">
+  <h2><span class="step-num">④</span>去重,然后挑出本批次的 100 页</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>通过质量卡的页面还不能直接用</h4>
+      <p>同一份官方文档可能因为切片方式不同、URL 写法不同、之前批次已经包含,产生多张看起来不一样但内容相同的卡。所以要先做"广撒网式去重",再按域配额挑出 <strong>本批次</strong> 真的要用哪些页面。</p>
+      <h4>去重的几个维度</h4>
+      <p>会用五个不同的"身份键"互相补足去重:卡自身的 ID、通道+资源号的组合、规范化哈希、整文档 URL、以及文档的来源链(lineage) + 在来源链里的位置。如果切片和整文档共享 URL,也不直接当一回事,会用来源链判断是不是"已存在的副本"还是"新位置上的新副本"。</p>
+      <h4>每批次固定 100 页</h4>
+      <p>一个批次固定 100 张卡：40 张政府、30 张临床、30 张财经。挑好后切成 4 个互不重叠的 25-卡块执行。块只是执行切片,不改变这 100 张作为一体的身份。</p>
+      <h4>在 AI 开跑前的硬门槛</h4>
+      <p>100 张的 JSON 都能解析、对应的正文都能加载、方案目录能读、查询预算工具和模型也都在。任一项缺失,在烧一分钱算力之前就要停下来。这就是把"先别动,确认环境齐了"写在代码里。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">四年 ACS 卡被识别为"同组不同时段"</h4>
+      <p>它们五个身份键里 channel + resource 都几乎一样,只有 vintage 不一样。系统通过实体键 + 时段键把四张归为同组,但仍然算作四个独立的 Source Card,因为正文哈希确实不同。</p>
+      <p style="font-size:13px;color:#854d0e;margin-top:6px">这四张会被分进同一个 100-卡批次的某个 25-卡块,在后面"单页题"和"多页题"两条路径都会被用到。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：四键、whole URL 与 document lineage 的执行顺序</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>历史去重</h4><p>顺序检查 <code>card_id</code>、whole-document URL、<code>(channel,rid)</code>、normalized SHA，再让 DocumentLineageIndex 判断 duplicate 或 derived-from-existing。</p></div>
+        <div class="tech-cell"><h4>本批去重</h4><p>历史通过后才建立本批内部四键表；只要任何稳定键已占用，后来的卡进入 dedup ledger，不参与 domain cap。</p></div>
+        <div class="tech-cell"><h4>Unit 切分</h4><p>Manifest 最后才按域 cap。300 张按域排序后 round-robin 成 3×100；每个 unit 都断言 30 medical / 40 gov / 30 finance 且 card path 可解析。</p></div>
+      </div>
+      <div class="invariant"><strong>关键顺序：</strong>质量门 → 历史/lineage → 本批四键 → net-new → domain cap。若先 cap 再去重，表面凑满的配额会在终验时塌掉。</div>
+    </div>
+  </details>
+</section>
+<nav class="pager"><a href="#overview"><small>上一页</small>总览与设计原则</a><a href="#generation"><small>下一页</small>组包、Seed 召回与出题</a></nav></div>
+<div class="subpage" id="generation" data-page="generation" hidden><header class="page-head"><div class="page-kicker">Part 2 · Stages 5–7</div><h1>从 Source 到可验证的 TaskSignature</h1><p>这一页集中解释单文档/多文档怎样分叉，Seed 如何召回和选择，以及 Generator 怎样稳定复用或有证据地修改工作流。</p><div class="mainline"><strong>主线：</strong>Source Card / Package → 四轴召回与 H=4 重排 → MAIN/AUX Selector → stable / mutated / source-native → TaskSignature 合同校验。</div><nav class="local-toc"><a href="#s5">⑤ 单/多文档</a><a href="#s6">⑥ Seed 召回与 H</a><a href="#s7">⑦ TaskSignature</a></nav></header>
+<section id="s5">
+  <h2><span class="step-num">⑤</span>单页题 vs 多页题,在哪里分叉,又在哪里汇合</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>为什么有"单页"和"多页"两种形状</h4>
+      <p>有些问题读一页文件就够了——比如"这份指南里第几条是给这种病人的"。但有些问题读一页根本不够——比如"这四年里同一群人在变少还是在变多"。前者是单页题,后者必须把多页拼起来。</p>
+      <h4>单页题怎么走</h4>
+      <p>一页 Source 进去,一页题目出来。附在训练对话里的页面正文上限为 16,000 字符。题目里引用的数字必须来自这一页。</p>
+      <h4>多页题怎么走</h4>
+      <p>2 到 4 页 Source 凑成一个<strong>包(package)</strong>。这个包的合法性要看两点:一是每页都在任务里真正被用到了(如果删掉一页答案还能出来,这一页就是凑数的);二是所有页正文合起来不超过 32,000 字符,出题才不会爆。</p>
+      <p>把多页凑在一起的依据有四类:同一件事在不同时段、同族但不同版本、文档之间互相引用、以及基于事实词的语义召回找到的相近关系。最后一种只是候选,最终能不能成包还是要看"页面是不是真的都被用上了"。</p>
+      <h4>汇合点</h4>
+      <p>两条路径走到写题 AI 之前看上去不同;从写题 AI 开始,就完全一样了——选方案、生成题、拼训练对话、两遍审核、入库、可能进入"晋升"流程。所以你只需要关心"输入是怎么凑的",不必关心"出题以后的事是不是同一套"。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">pkg_2c59b53ba2d0 走的是多页路径</h4>
+      <p>四年 ACS 卡被发现:共享一个实体键 <code>census|acs/acs3/spp|geo=state:*|vars=S0201_001E,S0201_002E,S0201_003E</code>,共享同样的 schema,有共同的对比对象(夏威夷、密西西比、波多黎各),但 period key 各不相同(2009/2010/2011/2013)。</p>
+      <p>系统标出关系是 <strong>"不同时段"</strong>,而不是"凑巧长得很像的页面"。</p>
+      <p>接下来系统做"必要性检查":删掉任何一年,比如 2011,都会让"四期并列对比"变成三期,2011 的四个事实 ID 全部失去来源。所以这个包通过必要性检查——4 个来源都必要。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：关系图怎样变成一个真正必要的 Source Package</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>Relation index</h4><p>机械身份边包括 same entity、different period、same family、different version；另有显式引用边和语义召回边。边保存证据与分数，不直接等于 package。</p></div>
+        <div class="tech-cell"><h4>Thick + comparability</h4><p>成员先过正文长度、facts 数、spans 数和 body source 门，再要求同一 instrument、共享稀有 metric tokens；“同实体 + 不同日期”只用于召回，不能独自成包。</p></div>
+        <div class="tech-cell"><h4>Package score</h4><p><code>0.5×structural + 0.3×evidence_alignment + 0.2×source_necessity</code>。正文越长不会加分；每个成员缺失会破坏哪个时期/规则必须写进 <code>removal_breaks</code>。</p></div>
+      </div>
+      <div class="invariant"><strong>多文档合同：</strong>2–4 Sources、总正文 ≤32K、每源至少贡献 operation-relevant facts、删除任一成员会使任务定义不完整。</div>
+    </div>
+  </details>
+</section>
+<section id="s6">
+  <h2><span class="step-num">⑥</span>选一个"工作方案"</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>什么是"工作方案"</h4>
+      <p>系统维护着一份"过去哪些做法被验证过可以出题"的方案库。一个方案不是一个答案模板,而是一套可执行的步骤,比如:</p>
+      <ol>
+        <li>定义可比指标、单位和比较期间;</li>
+        <li>取得每一对象的该指标;</li>
+        <li>用同一套口径对齐;</li>
+        <li>输出并列对比表并解释。</li>
+      </ol>
+      <h4>方案从哪来</h4>
+      <p>两类:<strong>已沉淀方案</strong>(当前目录 221 条)和<strong>运行时方案</strong>(历史上别批题出得好,系统回头把它们抽象成新方案)。后者有两种持久状态：等待跨卡验证的 candidate，以及已经被不同卡原样复用且审核全过的 active。pending 只存在于 checkpoint 前的候选队列，不属于 cumulative master 状态。</p>
+      <h4>怎么挑方案</h4>
+      <p>对当前这一页或这个包,系统把每个方案都投射到四个维度上打分:内容是否对得上、操作类型是否对得上、证据形状是否对得上、最后输出物是否对得上。按这几个维度的加权融合给出一个排序,挑一个"主方案",再选 0 到 2 个"辅助方案"补充灵感,但不能因此模糊主方案该做的事。</p>
+      <h4>挑不到方案怎么办</h4>
+      <p>三种合法处理:(一)允许"原生出题",不假装在复用方案,从这一页本身真的能出一道好题;(二)返回"诚实零题",意思就是这一页今天不要勉强出题;(三)修一修再加进来,就是下一节要做的事。<strong>这三件事都不是程序崩了——它们都是合法的"今天的结论"</strong>。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">选中了"做并列对比表"这个方案</h4>
+      <p>方案 ID 是 <code>slot_tc_comparable_metric_analysis_v1_01</code>,打分结果:基本对得上,但<strong>需要小修</strong>,因为这个方案原本假设的是"单一时段并列对比",而任务是"四期并列"。</p>
+      <p>这就决定了下一节我们要做一个"改了 4 步"的题,而不是一个"原封不动"的题。</p>
+      <details open>
+        <summary>这个 Seed 本体实际保存哪些字段</summary>
+        <table>
+          <thead><tr><th>字段</th><th>字段内容（中文释义；ID 保持原值）</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><code>scenario_id</code></td><td><code>slot_tc_comparable_metric_analysis_v1_01</code></td><td>Seed 的稳定身份，也是 Selector 和 TaskSignature 引用它的键。</td></tr>
+            <tr><td><code>contract_id</code></td><td><code>tc_comparable_metric_analysis_v1</code></td><td>说明它属于“可比指标分析”合同族。</td></tr>
+            <tr><td><code>work_steps</code></td><td><ol><li>确定指标定义、期间、单位、日期和会计口径；</li><li>为每个 peer 获取或推导可比输入；</li><li>用同一公式和处理方式计算并保留中间过程；</li><li>在一页 benchmarking table 中比较结果。</li></ol></td><td>真正可以稳定复用或被 mutation 修改的工作流。</td></tr>
+            <tr><td><code>structure_tags</code></td><td><code>["calculate", "compare"]</code></td><td>告诉召回器它需要计算和比较，而不只是摘要或检索。</td></tr>
+            <tr><td><code>output_requirements</code></td><td><ol><li>所有 peer 用同一公式和口径计算 like-for-like operating margin；</li><li>输出 peer benchmarking table；</li><li>保留关键中间计算。</li></ol></td><td>约束最终交付物，防止任务降级成一句概括。</td></tr>
+          </tbody>
+        </table>
+        <p>Seed 里不保存这道 ACS 题的年份和数值。那些属于当前 Source；Selector 判断合同是否匹配，Generator 再用 4 个有事实支持的 <code>modify_step</code> 把“peer 单期比较”改造成“四个 vintage 的州级比较”。</p>
+      </details>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：四轴召回、族去拥挤和 Selector 分别负责什么</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>统一画像</h4><p>Static catalog 和 runtime registry 先投影成同一个 <code>SeedRetrievalProfile</code>。<code>origin</code> 只留作审计，不参与排序；排序只读内容、证据、操作和交付物四个轴。</p></div>
+        <div class="tech-cell"><h4>机械召回</h4><p>四轴分别做 BM25/RRF。一个 Seed 即使四轴都命中，也只累计最强的两轴贡献，避免字段写得多就天然占优。随后按直接父种子 family 做贪心去拥挤，每族最多 3 席。</p><p><strong>H 没有消失：</strong>当前 <code>usage_decay_half_life=4</code>，它在 family 定员之后按本批使用次数重排候选。</p></div>
+        <div class="tech-cell"><h4>LLM Selector</h4><p>Selector 只能在固定候选池内选择：恰好一个 MAIN，判断 <code>exact</code> 或 <code>needs_edits</code>，再选最多两个 AUX。它没有权限把池外 seed 临时塞回来。</p></div>
+      </div>
+      <div class="invariant"><strong>池构造顺序：</strong>family 定员到 30 → usage decay 只重排、不逐出 → raw-relevance floor 保留至少 2 席。这个顺序同时控制热门方案垄断与冷门方案误入。</div>
+      <div class="invariant"><strong>H=4 到底做什么：</strong><code>adjusted_score = relevance × 2^(-usage_count / 4)</code>。同一 Seed 在本批使用 0 次保留 100% 分数，4 次降到 50%，8 次降到 25%。<code>usage_count</code> 只计当前批次，Seed 一旦被选中并送入 Generator 就立即 +1，不等题目最终成功；resume 会恢复本批计数，跨批累计采用次数不参与衰减。H 只改变 30 个既定候选的展示顺序，不改变成员集合；raw floor 仍保护最相关的 2 个候选。</div>
+    </div>
+  </details>
+</section>
+<section id="s7">
+  <h2><span class="step-num">⑦</span>把题具体写出来</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>这一步是谁在做</h4>
+      <p>大模型根据方案 + 一页或多页源材料 + 已经抽好的事实,写出三样东西:问题是什么(gold answer)、答案是怎么一步步想出来的(reasoning)、以及引用了哪几个事实。</p>
+      <h4>三种"出题姿势"</h4>
+      <p>三种姿势对应三种不一样的工作量:</p>
+      <ul>
+        <li><span class="badge source">直接复用</span>(stable):方案完全适用,工作步骤原封不动。这是验证"方案跨页是否成立"的最好证据。</li>
+        <li><span class="badge gen">方案微调</span>(mutated):方案整体合适,但要改 1 到 4 处。每处修改都要有事实依据(改了哪句话、有哪个事实支持这么改)。</li>
+        <li><span class="badge warn">原生题</span>(source-native):没有现成方案能套,但这一页本身能撑起一道好题。不会被算成"复用了方案"。</li>
+      </ul>
+      <h4>被卡住的几种情形</h4>
+      <div class="fail-list">
+        <strong>不会放过这道题的情况:</strong>
+        <ul>
+          <li>题目记录不是合法 JSON;</li>
+          <li>引用的某个事实,在源材料里查不到;</li>
+          <li>修改超过 4 处,或者某处修改没事实依据。</li>
+        </ul>
+        <p>这些都算"这一页今天出不了这道题",不是工程事故。</p>
+      </div>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">正好对方案改了 4 步</h4>
+      <table>
+        <thead><tr><th>原步骤</th><th>改成</th><th>支撑事实</th></tr></thead>
+        <tbody>
+          <tr><td>定义单一期间</td><td>四 vintage:2009/2010/2011/2013</td><td>四卡都有 <code>kf_000</code>(schema)</td></tr>
+          <tr><td>取 peer 数据</td><td>只取 Hawaii/Mississippi/Puerto Rico</td><td>四卡都有具体行事实</td></tr>
+          <tr><td>统一计算</td><td>直接比较 S0201_002E/003E 百分比</td><td>数值都是同口径百分比</td></tr>
+          <tr><td>单期对比表</td><td>四期并列对比表</td><td>四卡全部必要,缺一不可</td></tr>
+        </tbody>
+      </table>
+      <p>改动次数正好 4 个,没有超上限;每个改动都有事实站台;没有一个改动引用了假数据。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：不是“写一段题”，而是构造并验证 TaskSignature</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>结构化输出</h4><p>Generator 必须输出完整 <code>TaskSignature</code>：task id、source ids、role、问题、gold answer、reasoning、used facts、work steps、source-use map 和拒绝原因。JSON 只是语法门，字段间关系才是语义门。</p></div>
+        <div class="tech-cell"><h4>可重放修改</h4><p><code>stable</code> 不允许实质编辑；<code>mutated</code> 必须给 1–4 个 <code>modify_step</code>。程序从 seed 原步骤机械应用这些 edits，结果必须逐项等于 <code>final_work_steps</code>。</p></div>
+        <div class="tech-cell"><h4>事实闭包</h4><p>多文档事实先命名空间化为 <code>source_card_id::fact_id</code>。每个 used fact、每个 edit 的 supporting facts、每个 source-use 声明都必须落在 Package 提供的合法事实集合内。</p></div>
+      </div>
+      <div class="invariant"><strong>合法 honest zero：</strong>模型可以说材料不足，但必须使用允许的拒绝码，并由机械 feasibility gate 复核；如果机械门认为可做，系统只允许一次 bounded repair，不能无限追问模型。</div>
+    </div>
+  </details>
+</section>
+<nav class="pager"><a href="#source"><small>上一页</small>Source 处理</a><a href="#quality"><small>下一页</small>训练物化、审核与反馈闭环</a></nav></div>
+<div class="subpage" id="quality" data-page="quality" hidden><header class="page-head"><div class="page-kicker">Part 3 · Stages 8–12</div><h1>从训练对话到可幂等复用的反馈闭环</h1><p>这一页说明模型最终看到什么、SQ/WF 为什么分开、题如何原子入库，以及 pending candidate 如何经过 checkpoint、promotion 和 fold 回到累计 Seed 池。</p><div class="mainline"><strong>主线：</strong>TaskSignature → worker-visible messages → SQ/WF 双轴审计 → unit registry → pending/checkpoint → 跨卡 promotion → cumulative fold；全过程共用预算并受恢复指纹保护。</div><nav class="local-toc"><a href="#s8">⑧ 训练物化</a><a href="#s9">⑨ SQ/WF</a><a href="#s10">⑩ 入库</a><a href="#s11">⑪ Seed 闭环</a><a href="#s12">⑫ 运行保障</a></nav></header>
+<section id="s8">
+  <h2><span class="step-num">⑧</span>把题拼成"训练对话"</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>为什么要先拼再审</h4>
+      <p>审核这一步必须和训练时模型看到的一模一样。如果审核看的是别的版面的文本,那审核通过也不能保证训练时模型真的能答对。所以我们先把题目<strong>物化</strong>成训练时模型看到的那份材料,这份材料带一个哈希,然后审核看的就是它。</p>
+      <h4>多页题长这样</h4>
+      <p>系统消息写"请根据提供的资料回答"。然后附件按页面一段一段贴,每页一段,带"这是第 N 段、共 M 段、来源是 X、证据锚点是这几个事实"。最后用户的提问出现,再后面跟着标准答案。</p>
+      <h4>关键的顺序硬要求</h4>
+      <p>整段对话<strong>必须</strong>以"最后一句是用户提问,再后面一句是标准答案"结尾。把整个对话序列化后算一个哈希,这就是"训练样本的身份证"。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">pkg_2c59b53ba2d0 是一道"多页但单轮"的题</h4>
+      <p>它长这样(四段正文 + 一个问题 + 一个答案):</p>
+<pre><code>[SYSTEM] Answer using supplied source material.
+[USER  ] SOURCE MATERIAL + final question
+[ASST  ] 逐年列出 Hawaii / Mississippi 两个百分比，并说明 Puerto Rico 为 null</code></pre>
+      <p>工模式为 <code>attachments_only</code>(只贴正文,不调用工具),<code>input_messages</code> 为空——所以虽然有 4 页,但仍然是"用户一提问、助手一回答"的单轮对话。</p>
+      <p>这份材料被哈希成一份 <code>training_sample_sha256</code>,写在 <code>training_samples.jsonl</code> 第 87 行。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：先按事实选窗口，再生成模型最终会看到的 messages</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>事实驱动窗口</h4><p>每个 namespaced fact 先回到对应 source 的 evidence span，再围绕 span 扩展上下文。一个 source 有多个事实时合并重叠窗口，不能只截第一条事实附近的文本。</p></div>
+        <div class="tech-cell"><h4>多源预算</h4><p>Package 给每个成员至少 4K 字符基础份额，再按 source importance 与 facts 密度分配余量；最终所有窗口总和仍受 32K 上限约束。任一必要 source 没窗口就拒绝，而不是静默少贴一页。</p></div>
+        <div class="tech-cell"><h4>精确物化</h4><p>最终记录固定为 <code>system → user(attachments + question) → assistant(gold answer)</code>。Auditor 后续读取这三个 message，而不是重新从 Source Card 拼一个“差不多”的视图。</p></div>
+      </div>
+      <div class="invariant"><strong>训练身份证：</strong><code>training_sample_sha256 = SHA256(canonical_json(messages + attachments metadata))</code>。同一题若可见窗口或消息顺序变化，就是另一份训练样本。</div>
+    </div>
+  </details>
+</section>
+<section id="s9">
+  <h2><span class="step-num">⑨</span>两遍审核——题好不好,有没有照方案做</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>为什么是"两遍",而不是一遍</h4>
+      <p>审核其实问了两个不同的问题:</p>
+      <ul>
+        <li><span class="badge train">审核题面</span>(Sample Quality):这道训练样本好不好?对话里的人能不能从给定的正文里找到证据答对?答案本身是否正确?</li>
+        <li><span class="badge seed">审核方案</span>(Workflow Fidelity):这道题是不是真的执行了它声称在用的那个方案?</li>
+      </ul>
+      <p>前一关决定 <strong>题能不能进题库</strong>;后一关决定 <strong>方案能否被验证 / 被晋升</strong>。两个问题不同,管的事不同,所以分开问。</p>
+      <h4>三种姿势的审核规则不一样</h4>
+      <ul>
+        <li><span class="badge source">直接复用</span>的题:两关都要过——题要好,而且必须真的执行了方案。</li>
+        <li><span class="badge gen">方案微调</span>或<span class="badge warn">原生题</span>的题:只问前一关。问"是否执行了方案"不公平,因为本来就没打算执行——这种题的"方案那一栏"在出生时就程序写成了空,这是设计,不是失败。</li>
+      </ul>
+      <p>这个区别很重要:后面晋升方案要靠"另一批次的题用这个方案原封不动地答对了一次",所以错把改过的题算成"执行了方案"会污染晋升证据。</p>
+      <h4>审核前会给 AI 看一堆程序跑出来的诊断</h4>
+      <p>比如:哪个事实真正去原文比对过、哪几步有证据、哪几步落空、整道题的"可行性比例"。这些数字本身不裁决——裁决由另一次 AI 看诊断后给出。如果 AI 那边出问题(超时、JSON 解析错),这道题就要标为"基础设施未完成",不能悄悄放过去。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">pkg_2c59b53ba2d0 的审核结论</h4>
+<pre><code>category       = clean         (合格)
+generation_role= mutated       (方案微调)
+judge_verdict  = pass
+focused_audit  = True
+sample_quality = pass
+sample_quality_material_errors: []
+workflow_fidelity_pass = null   ← 注意这里</code></pre>
+      <p>审核 AI 明确核了"夏威夷 / 密西西比 / 波多黎各"在四年的所有相关数字,确认它们都出现在训练对话的附件里。<code>workflow_fidelity_pass = null</code> 在这里是合法状态,因为这道题本身就是微调的——我们没有按原方案执行,我们改了 4 步。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：SQ 与 WF 是两条不同的 release 轴</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>机械诊断</h4><p>先计算所有 used facts 是否可见、source 使用是否闭合、答案数字是否能在 worker-visible attachments 找到、work steps 是否可重放。诊断随精确 messages 一起交给 focused auditor。</p></div>
+        <div class="tech-cell"><h4>角色域</h4><p><code>stable</code> 的 WF 必须得到 True；<code>mutated</code> 与 <code>source_native</code> 的 WF 强制为 null，防止“改过方案”伪装成“原样验证方案”。</p></div>
+        <div class="tech-cell"><h4>放行真值表</h4><p>stable：<code>SQ pass ∧ WF True</code>；mutated/source-native：<code>SQ pass</code> 即可，WF 必须为 null。显式审计失败写入 rejected；审计调用或解析失败写 infra 状态，不得放行。</p></div>
+      </div>
+      <div class="invariant"><strong>为什么不统一要求 WF：</strong>WF 衡量“有没有原样执行 seed”，不是“题好不好”。对 mutated 强求 WF=True 会把产品定义上互斥的两件事混成一个分数。</div>
+    </div>
+  </details>
+</section>
+<section id="s10">
+  <h2><span class="step-num">⑩</span>先隔离入库，再统一导出</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>题库里有几样东西</h4>
+      <p>审核过的题不会统统混在一起。每批次有自己的隔离目录:合格题、待复审题、被拒题、本批次新发现的"待审方案"、本批次产生的方案,以及各种账本。</p>
+      <h4>旧训练样本和新题现在是什么关系</h4>
+      <p>生产时仍然隔离：旧流水线与每个 M7/M8 unit 各写各的 registry。提交前的统一导出已经完成：它先校验 question/training 配对，再用训练内容哈希生成新的 <code>sample_id</code>，所以同名但内容不同的题可以保留，内容完全相同的记录只留一份。当前统一集合共有 3,069 条通过审计的样本。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">pkg_2c59b53ba2d0 入在哪</h4>
+      <p>在 unit_4 这个批次的隔离 registry 里:</p>
+      <ul>
+        <li>富审计记录:<code>data/m8_unit4_live_v1_registry/questions.jsonl:87</code></li>
+        <li>训练记录:<code>data/m8_unit4_live_v1_registry/training_samples.jsonl:87</code></li>
+        <li>最终 task id:<code>pilot_sfg_sc_census_method_data_3784e6ec_1_m__pkg_2c59b53ba2d0</code></li>
+      </ul>
+      <p>对应的"改过的方案"进了 <code>pending_candidates.jsonl:53</code>,等下一节讲的事发生。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：Registry 原子写与统一导出的两种身份</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>Unit registry</h4><p><code>categorize()</code> 把题分 clean、review、rejected；题和 training sample 成对写入。bucket 写入先锁目录，再写临时文件并 <code>os.replace</code>，避免中途断电留下半行 JSON。</p></div>
+        <div class="tech-cell"><h4>生产 task id</h4><p>多文档在首次落盘前加 <code>__pkg&lt;12-hex&gt;</code>，用于区分同一 anchor 的单文档题与不同 package 题。但 task id 仍是生产追踪键，不再被当作训练内容的唯一身份。</p></div>
+        <div class="tech-cell"><h4>统一 sample id</h4><p>Exporter 对规范化 messages 与关键 metadata 计算内容哈希，生成 <code>sft4b_current_&lt;content-hash&gt;</code>。同 task id、不同内容进入 collision ledger 并同时保留；同内容才去重。</p></div>
+      </div>
+      <div class="invariant"><strong>一致性门：</strong>每个训练样本必须能找到对应 question、message roles 合法、assistant 非空、metadata 可追溯到 registry。富审计 JSON 不直接喂模型，最终记录只保留一个完整的 <code>messages</code> 数组。</div>
+    </div>
+  </details>
+</section>
+<section id="s11">
+  <h2><span class="step-num">⑪</span>让那些"改过的方案"将来有机会被重用——晋升与回收</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>为什么不立刻把新方案入库</h4>
+      <p>抽象方案、决定"这算不算一个新方案"、验证"它在另一张卡上是不是也能用"——这些都要花钱。如果让主流程在每道题结束时顺手做,预算不可控,resumability 也乱。所以这步被<strong>推迟</strong>到了另外一个独立预算的工序里去做。</p>
+      <h4>这道推迟的工序做什么</h4>
+      <ol>
+        <li>读出所有"待审方案"(<code>pending</code>);</li>
+        <li>先做程序级检查:是不是合法 JSON、有没有和已有方案重复、是不是能由修改操作重放;</li>
+        <li>再问一次 AI:这是一个"新且有用的工作方式"吗;</li>
+        <li>如果是,接收为"候选方案",记到账本,这批次的方案文件多一行;</li>
+        <li>如果是,这批次结束后,会和累计的大方案表做一次"原子合并"。</li>
+      </ol>
+      <h4>什么时候算"晋升"</h4>
+      <p>"候选方案"还不够。要等<strong>另一张不同的卡</strong>也用了这个方案、原封不动地出了一道合格题、并且那道题的"是否执行了方案"也为真——这样才算"方案被独立复用了一次",才能从候选升成"已晋升方案"。"已晋升"意味着这个方案在不同的素材上独立工作过,可以说"它不再只是这一次的事件"。</p>
+      <p>这一步偶尔被错误地简化成"题通过了 = 方案已晋升"。不要这样理解——同一张卡上的自我复用不算验证。</p>
+      <h4>合并是怎么个合并法</h4>
+      <p>每次合并四种状态变化之一:新加一条、把某条从"候选"翻成"已晋升"、给某条追加"已验证过的卡"、或者什么都不变(目标已经包含同样的状态)。合并会记下合并前后的快照哈希,确保同一批数据再跑一次也不会产生任何新的变化——这套机制是为了支持"任意重跑不乱"。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">pkg_2c59b53ba2d0 现在停在什么阶段</h4>
+      <p>它产出的"改过的方案"现在以 <code>pending</code> 状态躺在 <code>pending_candidates.jsonl:53</code>。还没变成"候选方案"——要等独立预算的那个工序下次开起来才会处理它。</p>
+      <p>它也<strong>还不能</strong>说自己"已晋升"——这是必然的,因为这是一道新题,还没有"另一张不同卡 + 原封不动"地复用这个方案的记录出现。我们之后会在别的批次上验证它,但那不是这批的事。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：主流程零额外调用，Checkpoint 与 Fold 独立闭环</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>Deferral</h4><p>主流程只把合格 mutated signature 写成 pending record，不在 <code>finalize_run</code> 内隐式调用抽象器。这样主任务的结束时点和预算可预测。</p></div>
+        <div class="tech-cell"><h4>Checkpoint</h4><p>每个 25-card chunk 后，独立 worker 读取尚未处理的 pending：先做 schema、实体泄露、悬空 fact、work-step replay 与近重复机械门，再在剩余共享预算内做 novelty、抽象与验证。</p></div>
+        <div class="tech-cell"><h4>Promotion + Fold</h4><p>Promotion 只扫描完整 runtime pool；不同 card 的 stable 题且 SQ/WF 都过，才追加 validated card 或把 candidate 翻成 active。Fold 用文件锁把 append/flip/extend/noop 合并进 cumulative master。</p></div>
+      </div>
+      <div class="invariant"><strong>幂等键与硬报警：</strong>pending/checkpoint 以 <code>(seed_id, task_id)</code> 去重；引用了 runtime seed 但 promotion pool 找不到时抛错。静态 <code>slot_/sc_/kf_</code> seed 不参与这个 runtime 完整性断言。</div>
+    </div>
+  </details>
+</section>
+<section id="s12">
+  <h2><span class="step-num">⑫</span>失败的样子、预算纪律,以及今天的数字</h2>
+  <div class="stage">
+    <div class="prose">
+      <h4>四种"不成功",不要互相顶替</h4>
+      <p>这一套流程里有四种"今天没出题"的情形,长得不一样,处理方式也不一样。</p>
+      <ul>
+        <li><span class="badge warn">没合适方案</span>:当前素材不适合任何已有方案,又不值得从素材本身出一道原生题。诚实零题,今天就到这里。</li>
+        <li><span class="badge bad">质量拒绝</span>:模型写错了,或证据挂不住。可以重试一两次(同预算内),再不行就拒绝。</li>
+        <li><span class="badge infra">基础设施失败</span>:网络抖动、429 限速、响应截断、JSON 解析错。可以视情况重试,但需要操作员显式授权,不能自动化。</li>
+        <li><span class="badge contract">契约 bug</span>:正文丢了、账本路径错了、指纹漂了。先硬停,一分钱都不让花在 AI 上;回到代码里修,改完跑一次 fake E2E。</li>
+      </ul>
+      <h4>预算是一条合同</h4>
+      <p>一个批次从头到尾只用一个共享预算,设硬上限。多页出题、单页选择器、出题、审核、方案抽象、JSON 修补都吃这同一个上限。预算用完,本批自然收口。任何子环节不允许偷偷建自己的 AI 客户端绕过这条线。</p>
+      <h4>重跑也不能乱的"指纹"</h4>
+      <p>下一次开跑前,系统先比对上次跑时的所有输入快照(本批次选了哪些卡、当前方案目录长啥样、提示词模板长啥样、正文仓库是否有变)。如果其中任一项漂了,系统会拒绝恢复,要求显式确认;如果没漂,可以放心接上次的进度。</p>
+    </div>
+    <div class="casebox">
+      <span class="case-tag">贯穿案例在这一节长这样</span>
+      <h4 style="margin-top:0">pkg_2c59b53ba2d0 的小插曲</h4>
+      <p>这题在 unit_4 第一次跑的时候,出题那一步撞上了一次 MiniMax 429——属于"基础设施失败"。在操作员授权后重试,这次跑通了。</p>
+      <p style="font-size:13px;color:#854d0e;margin-top:6px">这件事<strong>没有</strong>改变源材料、改方案、改题目,也没有把"质量被拒"的题偷偷放过去——它只是一次网络抖动的代价,需要操作员显式批准。</p>
+    </div>
+  </div>
+  <details class="tech-panel">
+    <summary>技术实现：一个 Unit 只有一个输入身份、一个预算和一个硬停出口</summary>
+    <div class="tech-body">
+      <div class="tech-grid">
+        <div class="tech-cell"><h4>Preflight</h4><p>先验证 100-card manifest、30/40/30 域配额、card JSON、body cache、seed master、client owner 与 API key。Gate 失败写明确原因并退出，promotion 与 fold 均不运行。</p></div>
+        <div class="tech-cell"><h4>Chunk contract</h4><p>完整 100-card manifest 构成 run-level fingerprint；四个 25-card <code>--only</code> 只是互不重叠的执行切片。四块 union 必须恰好等于 unit，任何 card 只能出现一次。</p></div>
+        <div class="tech-cell"><h4>SharedBudget</h4><p>多文档、四个单文档 chunk、Selector、Generator、Auditor、JSON repair 和 Checkpoint 共享计数器。当前实现先为多文档预留不超过 100 calls，再把剩余预算交给单文档与 checkpoint。</p></div>
+      </div>
+      <div class="invariant"><strong>恢复指纹：</strong>manifest、static/runtime seeds、prompts、config、blueprints、模块代码与 body cache 都入 fingerprint。run 内自己写入的 seeds 只能通过 append ledger + 时间锚重放掉；无法解释的 drift 一律拒绝 resume。</div>
+    </div>
+  </details>
+</section>
+<nav class="pager"><a href="#generation"><small>上一页</small>组包、Seed 召回与出题</a><a href="#case"><small>下一页</small>真实案例逐字段追踪</a></nav></div>
+<div class="subpage" id="case" data-page="case" hidden><header class="page-head"><div class="page-kicker">Part 4 · Real Case</div><h1>四张 Census Source 怎样变成一道训练题</h1><p>这一页不再讲一般规则，只追踪 <code>pkg_2c59b53ba2d0</code> 的真实字段：正文身份、事实坐标、Package、Seed 修改、TaskSignature、训练窗口、审核和最终导出。</p><div class="mainline"><strong>主线：</strong>4 个 ACS vintage → 16 个 namespaced facts → 4-source Package → 4 个 modify_step → 6 个 worker-visible windows → SQ pass → strict train sample。</div><nav class="local-toc"><a href="#case-deep">开始逐字段追踪</a></nav></header>
+<section id="case-deep">
+  <h2>真实案例深挖：pkg_2c59b53ba2d0 从四张 Source 到一条训练样本</h2>
+  <p class="lead">前面每节回答“系统一般怎么做”。这里不再抽象：只沿着一个真实 package 的字段往下追，所有 ID、数值、哈希、行号和结论都来自 unit_4 已落盘产物。</p>
+
+  <div class="case-trace">
+    <article class="trace-step">
+      <span class="case-tag">Trace 1 · 原始资源身份</span>
+      <h3>同一张 ACS S0201 表，四个 vintage，四个不可互换的正文</h3>
+      <p>采集器分别请求 Census ACS 3-Year Selected Population Profile 数据集，变量固定为 <code>S0201_001E</code>、<code>S0201_002E</code>、<code>S0201_003E</code> 和 <code>state</code>，地理范围固定为 <code>state:*</code>。唯一变化的是 vintage：2009、2010、2011、2013。</p>
+      <table>
+        <thead><tr><th>Vintage</th><th>Source Card</th><th>normalized SHA-256</th><th>正文字符</th><th>facts / spans</th></tr></thead>
+        <tbody>
+          <tr><td>2009</td><td><code>sc_census_method_data_3784e6ec</code></td><td class="path"><code>3784e6ec739051c3e85cd65069c8a898b39bdbac9866b6deeffffe86a32194cb</code></td><td>2,034</td><td>8 / 8</td></tr>
+          <tr><td>2010</td><td><code>sc_census_method_data_1f0be716</code></td><td class="path"><code>1f0be716617a6ad9f0a7e1de85613061e83539e32af61db51435b7b864284933</code></td><td>2,033</td><td>9 / 9</td></tr>
+          <tr><td>2011</td><td><code>sc_census_method_data_a59758ef</code></td><td class="path"><code>a59758ef8b1468c8a1fd5ebfde565a1f5800fea83beec45ddfd96c7735b06b7c</code></td><td>2,033</td><td>10 / 10</td></tr>
+          <tr><td>2013</td><td><code>sc_census_method_data_263eb274</code></td><td class="path"><code>263eb27484ff5a1ba53974229eacf709e19455627ada4fbd4b4fef6309849165</code></td><td>2,034</td><td>8 / 8</td></tr>
+        </tbody>
+      </table>
+      <div class="trace-io">
+        <div><b>Input</b>Census API resource descriptors</div>
+        <div><b>Output</b>4 张 <code>quality_gate_pass=true</code> 的 Source Card + 4 份 norm-cache blob</div>
+        <div><b>Why</b>同 schema 不等于同正文；四个 vintage 必须保留四个内容身份，后面才能证明每一年都真的出现。</div>
+      </div>
+    </article>
+
+    <article class="trace-step">
+      <span class="case-tag">Trace 2 · 证据锚点</span>
+      <h3>“Hawaii 2009 是 77.6”怎样从一句话变成可重放证据</h3>
+      <div class="fact-chain">
+        <div><strong>Fact</strong><br><code>kf_004</code><br>Lowest S0201_002E percentage is 77.6 for state code 15 (Hawaii)</div>
+        <div><strong>Span</strong><br><code>chunk_0006</code><br><code>[266, 292]</code></div>
+        <div><strong>Exact bytes</strong><br><code>1286497 | 77.6 | 14.9 | 15</code></div>
+        <div><strong>SHA-256</strong><br><code class="path">3b15b58808504b7483be8c466a243cc241b59b762b7c67f10623aeeac26bd3eb</code></div>
+      </div>
+      <p>这里事实陈述不是最终证据；它只是可检索的语义标签。最终证据是 frozen normalized body 的字符切片。程序重新执行 <code>body[266:292]</code> 后得到上面的 26 个字符，再计算 SHA，必须与 span 内哈希完全一致。</p>
+    </article>
+
+    <article class="trace-step">
+      <span class="case-tag">Trace 3 · 关系图与成包</span>
+      <h3>为什么这是一个四源任务，不是把四页碰巧绑在一起</h3>
+      <p>Step 2 为四张卡建立同实体、跨 period 的关系；Step 3 的 <code>cross_period_comparison</code> builder 再要求共同 instrument 与共同 metrics。最终 package 的共享锚点是：</p>
+      <pre><code>entity_key=census|acs/acs3/spp|geostate:*|varsS0201_001E,S0201_002E,S0201_003E
+metric:hawaii
+metric:mississippi
+metric:null</code></pre>
+      <table>
+        <thead><tr><th>成员</th><th>Package role</th><th>删除后破坏什么</th></tr></thead>
+        <tbody>
+          <tr><td>2009 card</td><td><code>period_evidence[vintage=2009]</code></td><td>2009 的指标事实消失，四期比较定义不完整</td></tr>
+          <tr><td>2010 card</td><td><code>period_evidence[vintage=2010]</code></td><td>2010 的指标事实消失，四期比较定义不完整</td></tr>
+          <tr><td>2011 card</td><td><code>period_evidence[vintage=2011]</code></td><td>2011 的指标事实消失，四期比较定义不完整</td></tr>
+          <tr><td>2013 card</td><td><code>period_evidence[vintage=2013]</code></td><td>2013 的指标事实消失，四期比较定义不完整</td></tr>
+        </tbody>
+      </table>
+      <p>四份正文合计 <strong>8,134</strong> 字符，低于 32,000。分数为 structural <strong>1.0</strong>、evidence alignment <strong>0.6875</strong>、source necessity <strong>1.0</strong>，所以总分 <code>0.5×1.0 + 0.3×0.6875 + 0.2×1.0 = 0.90625</code>，落盘四舍五入为 <strong>0.9062</strong>。</p>
+    </article>
+
+    <article class="trace-step">
+      <span class="case-tag">Trace 4 · Seed 选择与修改</span>
+      <h3>系统没有直接“凭空写题”，而是把一个可比指标方案改造成四期 Census 工作流</h3>
+      <p>Selector 选出的 MAIN 是 <code>slot_tc_comparable_metric_analysis_v1_01</code>，判定为 <code>needs_edits</code>。Generator 随后输出四个 <code>modify_step</code>；每一个动作都指向父 seed 的明确 step，并列出 supporting fact IDs。</p>
+      <table>
+        <thead><tr><th>目标 step</th><th>修改后的可执行步骤</th><th>事实支持</th></tr></thead>
+        <tbody>
+          <tr><td><code>:0</code></td><td>定义指标、单位以及 2009/2010/2011/2013 四个 vintage</td><td>四个 source 的 <code>kf_000</code> schema facts</td></tr>
+          <tr><td><code>:1</code></td><td>从四期分别取 Hawaii、Mississippi 与 null row 的三个字段</td><td>12 个跨源行级 facts</td></tr>
+          <tr><td><code>:2</code></td><td>保持原始表行，用同一百分比口径比较 S0201_002E/003E</td><td>四期 Mississippi / comparable facts</td></tr>
+          <tr><td><code>:3</code></td><td>输出覆盖三行、两个指标、四期的 side-by-side comparison</td><td>12 个跨源行级 facts</td></tr>
+        </tbody>
+      </table>
+      <p>Canonical replay 从父 seed 的四个原步骤出发，依序应用这四个动作，结果必须逐字符串等于 <code>final_work_steps</code>。因此“改了四步”不是模型的自我陈述，而是可重放的状态变换。</p>
+    </article>
+
+    <article class="trace-step">
+      <span class="case-tag">Trace 5 · TaskSignature</span>
+      <h3>最终题目、16 个事实引用与 5 步 reasoning</h3>
+      <div class="question-box"><strong>真实 question</strong><br>Using the four American Community Survey 3-Year S0201 Selected Population Profile vintages (2009, 2010, 2011, 2013), compare the S0201_002E and S0201_003E percentage values for Hawaii (FIPS 15), Mississippi (FIPS 28), and the Puerto Rico (FIPS 72) null row across all four vintages on the same basis. What does the side-by-side table show?</div>
+      <p>Signature 引用 16 个 namespaced facts，每个 source 正好 4 个。落盘 reasoning 有 5 步：</p>
+      <ol>
+        <li>确认四个 vintage 的 schema 都是 S0201_001E / 002E / 003E / state，因此可比对象是同一行上的两个 percentage 字段；</li>
+        <li>从四个附件分别取 Hawaii (FIPS 15) 的 002E 与 003E；</li>
+        <li>同样取 Mississippi (FIPS 28) 的两组百分比；</li>
+        <li>确认 FIPS 72 在四个 vintage 的三个字段都为 null，因此不能按同一百分比口径参与数值比较；</li>
+        <li>归纳出 Hawaii 持续为 002E 最低 / 003E 最高，Mississippi 持续为 002E 最高，Puerto Rico 持续不可比较。</li>
+      </ol>
+      <div class="answer-box"><strong>真实 gold answer 的数值展开</strong>
+        <table>
+          <thead><tr><th>对象 / 指标</th><th>2009</th><th>2010</th><th>2011</th><th>2013</th></tr></thead>
+          <tbody>
+            <tr><td>Hawaii S0201_002E</td><td>77.6</td><td>76.5</td><td>75.9</td><td>76.4</td></tr>
+            <tr><td>Hawaii S0201_003E</td><td>14.9</td><td>15.3</td><td>15.3</td><td>15.0</td></tr>
+            <tr><td>Mississippi S0201_002E</td><td>99.0</td><td>98.9</td><td>98.8</td><td>98.9</td></tr>
+            <tr><td>Mississippi S0201_003E</td><td>0.9</td><td>1.1</td><td>1.1</td><td>1.0</td></tr>
+            <tr><td>Puerto Rico FIPS 72</td><td>null</td><td>null</td><td>null</td><td>null</td></tr>
+          </tbody>
+        </table>
+        <p>落盘 gold 是一段英文结论，不是 HTML 表格；上表只是把那段 gold 中逐项出现的数值原样展开，方便检查。</p>
+      </div>
+      <details>
+        <summary>查看落盘 gold answer 原文</summary>
+        <p>Across all four vintages, Hawaii (FIPS 15) consistently has the lowest S0201_002E in the table (77.6 in 2009; 76.5 in 2010; 75.9 in 2011; 76.4 in 2013) with the highest S0201_003E (14.9, 15.3, 15.3, 15.0). Mississippi (FIPS 28) consistently holds the highest S0201_002E (99.0 in 2009; 98.9 in 2010; 98.8 in 2011; 98.9 in 2013) with S0201_003E at 0.9, 1.1, 1.1, and 1.0. The Puerto Rico (FIPS 72) row reports null across all three S0201 fields in every vintage, so it cannot be compared on the same percentage basis.</p>
+      </details>
+    </article>
+
+    <article class="trace-step">
+      <span class="case-tag">Trace 6 · Worker-visible materialization</span>
+      <h3>四张 Source 被物化成 6 个窗口，而不是把内部 JSON 直接暴露给模型</h3>
+      <table>
+        <thead><tr><th>Source</th><th>进入 user message 的字符窗口</th><th>为什么是这个形状</th></tr></thead>
+        <tbody>
+          <tr><td>2009</td><td><code>[0, 2034]</code></td><td>相关事实跨 schema、Hawaii、Mississippi、null row，合并后覆盖全文</td></tr>
+          <tr><td>2010</td><td><code>[0, 1207]</code> + <code>[1585, 2033]</code></td><td>数值行与末尾 null row 相隔较远，保留两个不相邻窗口</td></tr>
+          <tr><td>2011</td><td><code>[0, 1207]</code> + <code>[1585, 2033]</code></td><td>同样保留前部数值行与末尾 null row</td></tr>
+          <tr><td>2013</td><td><code>[0, 2034]</code></td><td>合并后的相关范围覆盖全文</td></tr>
+        </tbody>
+      </table>
+      <p>最终 messages 恰好三条：system 指示只依赖 supplied material；user 包含 6 个 SOURCE EXCERPT 和最后问题；assistant 包含 gold answer。<code>input_messages=[]</code>，所以它是<strong>四源、单轮、attachments-only</strong>，不是多轮任务。</p>
+      <div class="invariant"><strong>精确样本哈希：</strong><code>2257785c2f3203f513ff72920350e250319117b97c7db6432a2f31bc6f19bdc1</code></div>
+    </article>
+
+    <article class="trace-step">
+      <span class="case-tag">Trace 7 · Focused audit</span>
+      <h3>Auditor 逐组核了 16 个数值引用，但不会为 mutated 题伪造 WF</h3>
+      <p>Auditor 的 rationale 明确复核了 Hawaii 的两组四期数值、Mississippi 的两组四期数值和 Puerto Rico 的四期 null，并确认这些都直接出现在 user-visible attachments 中。结果：</p>
+      <pre><code>sample_quality_verdict = pass
+sample_quality_severity = none
+sample_quality_material_errors = []
+focused_audit_pass = true
+workflow_fidelity_verdict = null
+workflow_fidelity_pass = null</code></pre>
+      <p>最后两个 null 是预期：这是一条 <code>generation_role=mutated</code> 的题，它验证的是“修改后的工作流能否由 source 支撑”，没有声称父 seed 被原样复用。题可以放行，但这条记录本身不能成为父 seed 的 stable promotion 证据。</p>
+    </article>
+
+    <article class="trace-step">
+      <span class="case-tag">Trace 8 · Registry 与候选闭环</span>
+      <h3>题与 seed candidate 分两条账：一个已经能训练，一个仍待处理</h3>
+      <p>题以 package-scoped task id 落入 unit_4 registry：</p>
+      <pre><code>pilot_sfg_sc_census_method_data_3784e6ec_1_m__pkg_2c59b53ba2d0</code></pre>
+      <p>与此同时，修改后的四步工作流被写成一条 pending candidate：<code>status=pending</code>、<code>novelty_verdict=variant</code>、parent 为 <code>slot_tc_comparable_metric_analysis_v1_01</code>。这说明两个生命周期已经解耦：</p>
+      <ul>
+        <li><strong>训练样本：</strong>SQ pass 后已经可以进入统一训练导出；</li>
+        <li><strong>工作方案：</strong>还要经过 checkpoint 的机械门、抽象门和跨卡 stable 验证，不能因题通过就自动 active。</li>
+      </ul>
+    </article>
+
+    <article class="trace-step">
+      <span class="case-tag">Trace 9 · 统一训练导出</span>
+      <h3>同一个 task id 后来又生成过一次；Exporter 没误删，也没混成一条</h3>
+      <p>unit_5 后来出现同 task id 但内容不同的记录。如果只按 task id 去重，就会随机丢掉一条。统一导出改用内容身份，因此 unit_4 这条保留为：</p>
+      <pre><code>sample_id   = sft4b_current_886969be5f05ac246f8e53a3
+split       = train
+strict      = true
+split_group = split_7217925864a09d51</code></pre>
+      <p>task-id collision 单独进入 collision ledger；两份内容各自拥有 content-derived sample id。这样生产追踪键冲突仍然可审计，训练数据身份却不会被旧命名约定绑架。</p>
+    </article>
+  </div>
+</section>
+<nav class="pager"><a href="#quality"><small>上一页</small>质检与反馈闭环</a><a href="#overview"><small>回到入口</small>总览与内部子页导航</a></nav></div>
+</main>
+<script>
+(function(){
+  var pageIds = ["overview", "source", "generation", "quality", "case"];
+  var titles = {
+    overview: "PGCS 数据合成全链路 · 总览",
+    source: "Source 处理 · PGCS 数据合成",
+    generation: "组包与出题 · PGCS 数据合成",
+    quality: "质检与反馈闭环 · PGCS 数据合成",
+    case: "pkg_2c59b53ba2d0 真实案例 · PGCS"
+  };
+  function resolveRoute(){
+    var token = decodeURIComponent(location.hash.replace(/^#/, ""));
+    if (!token) return {page:"overview", target:null};
+    if (pageIds.indexOf(token) >= 0) return {page:token, target:null};
+    var target = document.getElementById(token);
+    var owner = target ? target.closest(".subpage") : null;
+    return owner ? {page:owner.getAttribute("data-page"), target:target} : {page:"overview", target:null};
+  }
+  function render(){
+    var route = resolveRoute();
+    document.querySelectorAll(".subpage").forEach(function(page){
+      page.hidden = page.getAttribute("data-page") !== route.page;
+    });
+    document.querySelectorAll("[data-page-link]").forEach(function(link){
+      var active = link.getAttribute("data-page-link") === route.page;
+      link.classList.toggle("active", active);
+      if (active) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current");
+    });
+    document.title = titles[route.page];
+    requestAnimationFrame(function(){
+      if (route.target) route.target.scrollIntoView({block:"start"});
+      else window.scrollTo({top:0,left:0});
+    });
+  }
+  window.addEventListener("hashchange", render);
+  render();
+})();
+</script>
+</body></html>
